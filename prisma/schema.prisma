@@ -29,7 +29,7 @@ model User {
   roles       UserRoleLink[]
   profile     Profile?
   skills      UserSkill[]
-  interests   UserInterest[]
+  interests   UserInterest[]\n  createdCourses Course[] @relation("CreatedCourses")\n  enrollments Enrollment[]
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
 }
@@ -122,4 +122,136 @@ model UserInterest {
 
   @@unique([userId, interestId])
   @@index([interestId])
+}
+
+
+enum CourseStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum CourseAccess {
+  FREE
+  PAID
+}
+
+enum LessonBlockType {
+  TEXT
+  IMAGE
+  VIDEO
+  CODE
+  QUIZ
+  CIRCUIT
+  SIMULATION
+  TASK
+  CHECKPOINT
+  UPLOAD
+  AI_INTERACTION
+}
+
+model CourseCategory {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  slug        String   @unique
+  description String?
+  courses     Course[]
+  createdAt   DateTime @default(now())
+}
+
+model Course {
+  id          String       @id @default(cuid())
+  title       String
+  slug        String       @unique
+  description String?
+  thumbnailUrl String?
+  status      CourseStatus @default(DRAFT)
+  access      CourseAccess @default(FREE)
+  price       Int?
+  currency    String       @default("GHS")
+  level       String?
+  creatorId   String
+  creator     User         @relation("CreatedCourses", fields: [creatorId], references: [id], onDelete: Cascade)
+  categoryId  String?
+  category    CourseCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  modules     CourseModule[]
+  enrollments Enrollment[]
+  publishedAt DateTime?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@index([creatorId, status])
+  @@index([categoryId, status])
+}
+
+model CourseModule {
+  id        String   @id @default(cuid())
+  title     String
+  position  Int
+  courseId  String
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lessons   Lesson[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([courseId, position])
+}
+
+model Lesson {
+  id          String        @id @default(cuid())
+  title       String
+  slug        String
+  summary     String?
+  position    Int
+  durationMin Int?
+  isPreview   Boolean       @default(false)
+  moduleId    String
+  module      CourseModule  @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  blocks      LessonBlock[]
+  progress    LessonProgress[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@unique([moduleId, position])
+  @@unique([moduleId, slug])
+}
+
+model LessonBlock {
+  id        String          @id @default(cuid())
+  type      LessonBlockType
+  position  Int
+  data      Json
+  lessonId  String
+  lesson    Lesson          @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+
+  @@unique([lessonId, position])
+}
+
+model Enrollment {
+  id          String   @id @default(cuid())
+  userId      String
+  courseId    String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  enrolledAt  DateTime @default(now())
+  completedAt DateTime?
+  progress    LessonProgress[]
+
+  @@unique([userId, courseId])
+  @@index([courseId])
+}
+
+model LessonProgress {
+  id           String     @id @default(cuid())
+  enrollmentId String
+  lessonId     String
+  enrollment   Enrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  lesson       Lesson     @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  completed    Boolean    @default(false)
+  completedAt  DateTime?
+  updatedAt    DateTime   @updatedAt
+
+  @@unique([enrollmentId, lessonId])
 }
