@@ -1,0 +1,3 @@
+import { NextResponse } from "next/server";import { auth } from "@/auth";import { addBlock } from "@/modules/learning/creator-service";
+const TYPES=["TEXT","IMAGE","VIDEO","CODE","QUIZ","CIRCUIT","SIMULATION","TASK","CHECKPOINT","UPLOAD","AI_INTERACTION"];
+export async function POST(req:Request,{params}:{params:Promise<{lessonId:string}>}){const s=await auth();if(!s?.user?.id)return NextResponse.json({error:"UNAUTHORIZED"},{status:401});const{lessonId}=await params;const b=await req.json();if(!TYPES.includes(b.type)||!b.data)return NextResponse.json({error:"INVALID_BLOCK"},{status:422});const block=await addBlock(lessonId,s.user.id,b.type,b.data);return block?NextResponse.json({data:block},{status:201}):NextResponse.json({error:"NOT_FOUND"},{status:404});}
