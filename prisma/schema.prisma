@@ -29,7 +29,9 @@ model User {
   roles       UserRoleLink[]
   profile     Profile?
   skills      UserSkill[]
-  interests   UserInterest[]\n  createdCourses Course[] @relation("CreatedCourses")\n  enrollments Enrollment[]
+  interests   UserInterest[]
+  createdCourses Course[] @relation("CreatedCourses")
+  enrollments Enrollment[]
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
 }
