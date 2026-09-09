@@ -19,7 +19,7 @@ export function SiteHeader() {
 
         <div className="premiumHeaderActions">
           <Link href="/sign-in" className="premiumSignIn">Sign in</Link>
-          <Link href="/onboarding" className="premiumGetStarted">Get started</Link>
+          <Link href="/sign-up" className="premiumGetStarted">Get started</Link>
         </div>
       </div>
     </header>
