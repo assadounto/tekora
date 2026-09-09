@@ -1,0 +1,2 @@
+import { NextResponse } from "next/server";import { auth } from "@/auth";import { publishCourse } from "@/modules/learning/creator-service";
+export async function POST(_:Request,{params}:{params:Promise<{courseId:string}>}){const s=await auth();if(!s?.user?.id)return NextResponse.json({error:"UNAUTHORIZED"},{status:401});const{courseId}=await params;const r=await publishCourse(courseId,s.user.id);if("error"in r)return NextResponse.json(r,{status:r.error==="NOT_FOUND"?404:422});return NextResponse.json({data:r});}
