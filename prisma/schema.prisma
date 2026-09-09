@@ -17,12 +17,109 @@ enum UserRole {
 }
 
 model User {
+  id          String       @id @default(cuid())
+  email       String       @unique
+  username    String?      @unique
+  name        String?
+  bio         String?
+  headline    String?
+  location    String?
+  avatarUrl   String?
+  onboardingCompleted Boolean @default(false)
+  roles       UserRoleLink[]
+  profile     Profile?
+  skills      UserSkill[]
+  interests   UserInterest[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model UserRoleLink {
   id        String   @id @default(cuid())
-  email     String   @unique
-  username  String?  @unique
-  name      String?
-  role      UserRole @default(LEARNER)
-  bio       String?
+  role      UserRole
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+
+  @@unique([userId, role])
+  @@index([role])
+}
+
+model Institution {
+  id        String    @id @default(cuid())
+  name      String
+  slug      String    @unique
+  country   String?
+  profiles  Profile[]
+  programs  Program[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Program {
+  id            String       @id @default(cuid())
+  name          String
+  slug          String
+  institutionId String?
+  institution   Institution? @relation(fields: [institutionId], references: [id], onDelete: SetNull)
+  profiles      Profile[]
+
+  @@unique([institutionId, slug])
+}
+
+model Profile {
+  id            String       @id @default(cuid())
+  userId        String       @unique
+  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  institutionId String?
+  institution   Institution? @relation(fields: [institutionId], references: [id], onDelete: SetNull)
+  programId     String?
+  program       Program?     @relation(fields: [programId], references: [id], onDelete: SetNull)
+  level         String?
+  goal          String?
+  availability  String?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+}
+
+model Skill {
+  id        String      @id @default(cuid())
+  name      String      @unique
+  slug      String      @unique
+  users     UserSkill[]
+  createdAt DateTime    @default(now())
+}
+
+model UserSkill {
+  id        String   @id @default(cuid())
+  userId    String
+  skillId   String
+  level     Int      @default(1)
+  verified  Boolean  @default(false)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  skill     Skill    @relation(fields: [skillId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, skillId])
+  @@index([skillId])
+}
+
+model Interest {
+  id        String         @id @default(cuid())
+  name      String         @unique
+  slug      String         @unique
+  users     UserInterest[]
+  createdAt DateTime       @default(now())
+}
+
+model UserInterest {
+  id         String   @id @default(cuid())
+  userId     String
+  interestId String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  interest   Interest @relation(fields: [interestId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+
+  @@unique([userId, interestId])
+  @@index([interestId])
 }

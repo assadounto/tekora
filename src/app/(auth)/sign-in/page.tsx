@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SignInForm } from "@/components/sign-in-form";
 
 export default function SignInPage() {
   return (
@@ -8,24 +9,10 @@ export default function SignInPage() {
         <div>
           <p className="eyebrow">WELCOME BACK</p>
           <h1>Continue building your future.</h1>
-          <p className="muted">Sign in to continue your courses, projects, circles and opportunities.</p>
+          <p className="muted">Use your Tekora email to continue to your learning identity.</p>
         </div>
-
-        <form className="authForm">
-          <label>
-            Email
-            <input type="email" placeholder="you@example.com" />
-          </label>
-          <label>
-            Password
-            <input type="password" placeholder="••••••••" />
-          </label>
-          <button type="button" className="primaryButton">Sign in</button>
-        </form>
-
-        <p className="authFooter">
-          New to Tekora? <Link href="/onboarding">Create your account</Link>
-        </p>
+        <SignInForm />
+        <p className="authFooter">New to Tekora? <Link href="/onboarding">Create your account</Link></p>
       </section>
     </main>
   );
