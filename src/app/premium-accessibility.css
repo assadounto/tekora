@@ -1,8 +1,8 @@
 :root{
   --tk-green:#25d366;
-  --tk-action:#087a62;
-  --tk-action-hover:#066b56;
-  --tk-action-active:#055b49;
+  --tk-action:#128269;
+  --tk-action-hover:#0f745e;
+  --tk-action-active:#0c6753;
   --tk-focus:#111b21;
 }
 
@@ -12,7 +12,7 @@
   background:var(--tk-action)!important;
   color:#fff!important;
   border:1px solid var(--tk-action)!important;
-  box-shadow:0 7px 18px rgba(8,122,98,.16)!important;
+  box-shadow:0 6px 16px rgba(18,130,105,.14)!important;
   text-shadow:none;
   transition:background-color .16s ease,border-color .16s ease,transform .16s ease,box-shadow .16s ease;
 }
@@ -28,7 +28,7 @@
   border-color:var(--tk-action-hover)!important;
   color:#fff!important;
   transform:translateY(-1px);
-  box-shadow:0 9px 22px rgba(8,122,98,.2)!important;
+  box-shadow:0 8px 20px rgba(18,130,105,.17)!important;
 }
 
 .premiumGetStarted:active,
@@ -48,7 +48,7 @@
   outline-offset:3px;
 }
 
-/* Brand mark is also a green surface, so keep its glyph white. */
+/* Brand mark is a green surface, so keep its glyph white. */
 .premiumBrandIcon{
   background:var(--tk-action)!important;
   color:#fff!important;
@@ -68,7 +68,7 @@
   border-color:#98ada2!important;
 }
 
-/* Non-text bright green elements can remain vivid brand accents. */
+/* Bright brand green is reserved for small visual accents. */
 .visualDot,
 .visualProgress span{
   background:var(--tk-green)!important;
@@ -79,8 +79,8 @@
 .premiumPrimaryCta[aria-disabled="true"],
 .premiumGetStarted:disabled,
 .premiumPrimaryCta:disabled{
-  background:#9cb9ac!important;
-  border-color:#9cb9ac!important;
+  background:#a1bdb1!important;
+  border-color:#a1bdb1!important;
   color:#fff!important;
   box-shadow:none!important;
   cursor:not-allowed;
