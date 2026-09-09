@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { SiteHeader } from "@/components/site-header";
+import "./premium-home.css";
 
 const stats = [
   ["10K+", "Learners"],
