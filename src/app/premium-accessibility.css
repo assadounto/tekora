@@ -1,0 +1,96 @@
+:root{
+  --tk-green:#25d366;
+  --tk-action:#087a62;
+  --tk-action-hover:#066b56;
+  --tk-action-active:#055b49;
+  --tk-focus:#111b21;
+}
+
+/* Green interactive surfaces always carry white content. */
+.premiumGetStarted,
+.premiumPrimaryCta{
+  background:var(--tk-action)!important;
+  color:#fff!important;
+  border:1px solid var(--tk-action)!important;
+  box-shadow:0 7px 18px rgba(8,122,98,.16)!important;
+  text-shadow:none;
+  transition:background-color .16s ease,border-color .16s ease,transform .16s ease,box-shadow .16s ease;
+}
+
+.premiumGetStarted span,
+.premiumPrimaryCta span{
+  color:#fff!important;
+}
+
+.premiumGetStarted:hover,
+.premiumPrimaryCta:hover{
+  background:var(--tk-action-hover)!important;
+  border-color:var(--tk-action-hover)!important;
+  color:#fff!important;
+  transform:translateY(-1px);
+  box-shadow:0 9px 22px rgba(8,122,98,.2)!important;
+}
+
+.premiumGetStarted:active,
+.premiumPrimaryCta:active{
+  background:var(--tk-action-active)!important;
+  border-color:var(--tk-action-active)!important;
+  transform:translateY(0);
+}
+
+.premiumGetStarted:focus-visible,
+.premiumPrimaryCta:focus-visible,
+.premiumSecondaryCta:focus-visible,
+.premiumSignIn:focus-visible,
+.premiumNav a:focus-visible,
+.premiumFooter a:focus-visible{
+  outline:3px solid var(--tk-focus);
+  outline-offset:3px;
+}
+
+/* Brand mark is also a green surface, so keep its glyph white. */
+.premiumBrandIcon{
+  background:var(--tk-action)!important;
+  color:#fff!important;
+}
+
+/* Secondary controls stay neutral so primary actions remain obvious. */
+.premiumSecondaryCta{
+  background:#fff!important;
+  color:#111b21!important;
+  border-color:#c9d6cf!important;
+  box-shadow:none!important;
+}
+
+.premiumSecondaryCta:hover{
+  background:#f3f8f5!important;
+  color:#075e54!important;
+  border-color:#98ada2!important;
+}
+
+/* Non-text bright green elements can remain vivid brand accents. */
+.visualDot,
+.visualProgress span{
+  background:var(--tk-green)!important;
+}
+
+/* Disabled states stay readable and clearly inactive. */
+.premiumGetStarted[aria-disabled="true"],
+.premiumPrimaryCta[aria-disabled="true"],
+.premiumGetStarted:disabled,
+.premiumPrimaryCta:disabled{
+  background:#9cb9ac!important;
+  border-color:#9cb9ac!important;
+  color:#fff!important;
+  box-shadow:none!important;
+  cursor:not-allowed;
+  transform:none;
+}
+
+@media (prefers-reduced-motion:reduce){
+  .premiumGetStarted,
+  .premiumPrimaryCta,
+  .premiumSecondaryCta{
+    transition:none;
+  }
+}
