@@ -1,0 +1,3 @@
+"use client";
+import{useState}from"react";
+export function EnrollButton({courseId}:{courseId:string}){const[loading,setLoading]=useState(false);const[error,setError]=useState("");async function enroll(){setLoading(true);setError("");const r=await fetch("/api/v1/courses/"+courseId+"/enroll",{method:"POST"});const j=await r.json();if(!r.ok){setError(j.error==="PAYMENT_REQUIRED"?"Payments for paid courses are coming next.":j.error==="UNAUTHORIZED"?"Sign in to enroll.":"Could not enroll.");setLoading(false);return}window.location.href="/learn/course/"+courseId}return <div><button className="primaryButton" onClick={enroll} disabled={loading}>{loading?"Enrolling...":"Enroll now"}</button>{error?<p className="formError">{error}</p>:null}</div>}
