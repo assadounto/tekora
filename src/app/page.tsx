@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { SiteHeader } from "@/components/site-header";
 import "./premium-home.css";
+import "./premium-accessibility.css";
 
 const stats = [["10K+","Learners"],["500+","Courses"],["100+","Creators"],["50+","Countries"]];
 const features = [["01","Practical learning","Hands-on projects, labs, challenges and evidence you can show."],["02","Expert creators","Learn from engineers, developers, lecturers and skilled professionals."],["03","Flexible paths","Learn at your own pace and build a path around your goals."],["04","Global community","Meet learners, form teams and create something bigger together."]];
