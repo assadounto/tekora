@@ -1,16 +1,47 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SiteHeader } from "@/components/site-header";
+import { ProjectPhaseTracker, ProjectSaveButton, ProjectStartButton } from "@/components/project-workspace-controls";
 import { getProject } from "@/modules/projects/catalog";
 import "../../premium-home.css";
 import "../../premium-accessibility.css";
 import "../projects.css";
 import "./project-detail.css";
 
+function projectResources(field: string) {
+  const value = field.toLowerCase();
+  if (value.includes("software")) {
+    return [
+      ["ARCH", "System architecture", "Plan pages, data flow, APIs and responsibilities before coding."],
+      ["CODE", "Starter code", "Use the guide structure to build the application in manageable parts."],
+      ["API", "Integration notes", "Understand external services, payloads and error handling."],
+      ["TEST", "Testing checklist", "Verify the important user journeys before presenting the project."],
+      ["DOC", "Report & defense", "Explain requirements, architecture, implementation, testing and limitations."],
+    ];
+  }
+  if (value.includes("mechanical") || value.includes("carpentry") || value.includes("civil")) {
+    return [
+      ["DRAW", "Working drawings", "Use measurements, layout and assembly references before fabrication."],
+      ["MAT", "Material list", "Review the materials, quantities and tools required for the build."],
+      ["BUILD", "Assembly guide", "Follow the construction sequence and important checkpoints."],
+      ["TEST", "Inspection checklist", "Check stability, dimensions, movement or structural performance."],
+      ["DOC", "Report & presentation", "Document design choices, process, results and improvements."],
+    ];
+  }
+  return [
+    ["BLK", "Block diagram", "Understand the complete system before wiring individual components."],
+    ["WIRE", "Circuit / wiring", "Follow the connection plan and verify power before switching on."],
+    ["CODE", "Controller code", "Build and understand the firmware one function at a time."],
+    ["SIM", "Simulation support", "Use MATLAB, Simulink, Proteus or calculations where the project needs them."],
+    ["DOC", "Report & defense", "Connect objectives, methodology, results, limitations and future improvements."],
+  ];
+}
+
 export default async function ProjectDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const project = getProject(slug);
   if (!project) notFound();
+  const resources = projectResources(project.field);
 
   return (
     <main className="projectDetailPage">
@@ -23,7 +54,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
           <h1>{project.title}</h1>
           <p>{project.summary}</p>
           <div className="projectDetailBadges"><span>{project.difficulty}</span><span>{project.time}</span>{project.mode.map(mode => <span key={mode}>{mode}</span>)}</div>
-          <div className="projectDetailActions"><Link className="premiumPrimaryCta" href="#phases">Start project →</Link><button type="button" className="premiumSecondaryCta">♡ Save project</button></div>
+          <div className="projectDetailActions"><ProjectStartButton slug={project.slug} /><ProjectSaveButton slug={project.slug} /><Link className="projectMyLink" href="/projects/my">My Projects →</Link></div>
         </div>
 
         <aside className="projectKitSummary">
@@ -45,25 +76,29 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
 
           <section id="phases" className="projectPhasesSection">
             <div className="projectDetailHeading"><div><span className="projectEyebrow">PROJECT PHASES</span><h2>Build it one clear step at a time.</h2></div><span>{project.phases.length} phases</span></div>
-            <div className="projectPhaseList">
-              {project.phases.map((phase, index) => (
-                <article key={phase.title}>
-                  <span className="projectPhaseNumber">{String(index + 1).padStart(2, "0")}</span>
-                  <div><small>PHASE {index + 1}</small><h3>{phase.title}</h3><p>{phase.description}</p></div>
-                  <span className="projectPhaseStatus">Start →</span>
-                </article>
-              ))}
-            </div>
+            <ProjectPhaseTracker slug={project.slug} phases={project.phases} />
           </section>
 
           {project.components?.length ? (
             <section id="components" className="projectComponentsSection">
-              <span className="projectEyebrow">COMPONENTS / MATERIALS</span>
-              <h2>What you need to build it.</h2>
-              <div className="projectComponentGrid">{project.components.map((component, index) => <div key={component}><span>✓</span><strong>{component}</strong><small>Item {index + 1}</small></div>)}</div>
-              {project.kitPrice ? <div className="projectKitCallout"><div><strong>Want everything together?</strong><p>Get the components matched to this Tekora project instead of sourcing them one by one.</p></div><Link href="#" className="premiumPrimaryCta">Get complete kit →</Link></div> : null}
+              <div className="projectDetailHeading"><div><span className="projectEyebrow">BILL OF MATERIALS</span><h2>What you need to build it.</h2></div><span>{project.components.length} line items</span></div>
+              <div className="projectBomTable">
+                <div className="projectBomHead"><span>Item</span><span>Qty</span><span>Kit status</span></div>
+                {project.components.map((component) => <div className="projectBomRow" key={component}><strong>{component}</strong><span>1</span><span>{project.kitPrice ? "Included" : "Source locally"}</span></div>)}
+              </div>
+              <div className="projectBomNote">Individual component prices will come from the Tekora Store inventory rather than using made-up estimates.</div>
+              {project.kitPrice ? <div className="projectKitCallout"><div><strong>Want everything together?</strong><p>Get the components matched to this Tekora project instead of sourcing them one by one.</p></div><Link href="#" className="premiumPrimaryCta">Get complete kit · GHS {project.kitPrice.toFixed(2)} →</Link></div> : null}
             </section>
           ) : null}
+
+          <section className="projectResourcesSection">
+            <span className="projectEyebrow">PROJECT RESOURCES</span>
+            <h2>Everything around the build.</h2>
+            <p className="projectSectionIntro">The workspace keeps the technical resources beside the project instead of scattering them across different pages.</p>
+            <div className="projectResourceGrid">
+              {resources.map(([code, title, copy]) => <article key={title}><span>{code}</span><div><strong>{title}</strong><p>{copy}</p></div><em>Guide</em></article>)}
+            </div>
+          </section>
 
           <section className="projectSupportSection">
             <span className="projectEyebrow">TEKORA PROJECT SUPPORT</span>
@@ -78,6 +113,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
 
         <aside className="projectDetailRail">
           <div className="projectRailCard"><span className="projectEyebrow">PROJECT SNAPSHOT</span><div><small>Field</small><strong>{project.field}</strong></div><div><small>Area</small><strong>{project.area}</strong></div><div><small>Difficulty</small><strong>{project.difficulty}</strong></div><div><small>Estimated time</small><strong>{project.time}</strong></div></div>
+          <div className="projectRailCard projectRailAction"><span className="projectEyebrow">YOUR WORKSPACE</span><p>Save this project, start it and track each build phase locally on this device.</p><Link href="/projects/my">Open My Projects →</Link></div>
           <div className="projectRailCard"><span className="projectEyebrow">NEED SOMETHING DIFFERENT?</span><p>Describe the project you want, your programme and what kind of help you need.</p><Link href="/projects/request">Request a project →</Link></div>
         </aside>
       </section>
