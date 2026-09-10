@@ -11,7 +11,7 @@ export function SiteHeader() {
 
         <nav className="premiumNav" aria-label="Primary navigation">
           <Link href="/projects">Projects</Link>
-          <Link href="/projects#catalog">DIY Builds</Link>
+          <Link href="/projects/my">My Projects</Link>
           <Link href="/projects#catalog">Project Kits</Link>
           <Link href="/projects/request">Request a Project</Link>
           <Link href="/learn">Learn</Link>
