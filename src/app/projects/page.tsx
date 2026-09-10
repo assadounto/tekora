@@ -18,8 +18,9 @@ export default function ProjectsPage() {
           <p>Browse practical projects across engineering, software, mechanical work, carpentry and more. Choose something simple, challenge yourself with a harder build, follow a DIY guide, or get a complete kit when available.</p>
           <div className="projectMarketActions">
             <Link className="premiumPrimaryCta" href="#catalog">Browse projects →</Link>
-            <Link className="premiumSecondaryCta" href="/projects/request">Request a project</Link>
-            <Link className="projectTextAction" href="/projects/new">Create your own project →</Link>
+            <Link className="premiumSecondaryCta" href="/projects/my">My Projects</Link>
+            <Link className="projectTextAction" href="/projects/request">Request a project →</Link>
+            <Link className="projectTextAction" href="/projects/new">Create your own →</Link>
           </div>
         </div>
 
