@@ -10,11 +10,11 @@ export function SiteHeader() {
         </Link>
 
         <nav className="premiumNav" aria-label="Primary navigation">
-          <Link href="/#explore">Students</Link>
+          <Link href="/projects">Projects</Link>
+          <Link href="/projects#catalog">DIY Builds</Link>
+          <Link href="/projects#catalog">Project Kits</Link>
+          <Link href="/projects/request">Request a Project</Link>
           <Link href="/learn">Learn</Link>
-          <Link href="/#universities">Universities</Link>
-          <Link href="/#community">Community</Link>
-          <Link href="/creator/courses">Creators</Link>
         </nav>
 
         <div className="premiumHeaderActions">
