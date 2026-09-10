@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import { ProjectSaveButton } from "@/components/project-workspace-controls";
 import { projectFields, projects } from "@/modules/projects/catalog";
 
 const difficulties = ["All", "Simple", "Intermediate", "Advanced"];
@@ -26,7 +27,10 @@ export function ProjectCatalog() {
     <>
       <div className="projectMarketHead">
         <div><span className="projectEyebrow">PROJECT LIBRARY</span><h2>Choose what you want to build.</h2><p>Start from your field, then choose the difficulty and style that fits you.</p></div>
-        <label className="projectSearch"><span>⌕</span><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search projects, fields, skills..." aria-label="Search projects" /></label>
+        <div className="projectMarketTools">
+          <label className="projectSearch"><span>⌕</span><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search projects, fields, skills..." aria-label="Search projects" /></label>
+          <Link href="/projects/my" className="projectMyProjectsLink">My Projects →</Link>
+        </div>
       </div>
 
       <div className="projectFilterRow">
@@ -48,7 +52,10 @@ export function ProjectCatalog() {
                 <h3><Link href={`/projects/${project.slug}`}>{project.title}</Link></h3>
                 <p>{project.summary}</p>
                 <div className="projectSkillRow">{project.skills.slice(0, 3).map(skill => <span key={skill}>{skill}</span>)}</div>
-                <div className="projectCardFooter"><div className="projectModes">{project.mode.map(mode => <span key={mode}>{mode}</span>)}</div><Link href={`/projects/${project.slug}`}>View project →</Link></div>
+                <div className="projectCardFooter">
+                  <div><div className="projectModes">{project.mode.map(mode => <span key={mode}>{mode}</span>)}</div><ProjectSaveButton slug={project.slug} compact /></div>
+                  <Link href={`/projects/${project.slug}`}>View project →</Link>
+                </div>
               </div>
             </article>
           ))}
