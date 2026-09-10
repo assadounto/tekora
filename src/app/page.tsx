@@ -1,46 +1,231 @@
 import Link from "next/link";
 import { SiteHeader } from "@/components/site-header";
 import "./premium-home.css";
+import "./home-platform.css";
 import "./premium-accessibility.css";
 
-const stats = [["10K+","Learners"],["500+","Courses"],["100+","Creators"],["50+","Countries"]];
-const features = [["01","Practical learning","Hands-on projects, labs, challenges and evidence you can show."],["02","Expert creators","Learn from engineers, developers, lecturers and skilled professionals."],["03","Flexible paths","Learn at your own pace and build a path around your goals."],["04","Global community","Meet learners, form teams and create something bigger together."]];
-const sampleCourses = [["Bestseller","Full-Stack Web Development with Next.js","Build modern web products from idea to deployment.","Daniel Okafor","4.9"],["Popular","Introduction to AI for Engineers","Understand modern AI systems through practical engineering use cases.","Sarah Musa","4.8"],["Cloud","Cloud Engineering with AWS","Deploy, scale and manage production-ready applications.","James Adeyemi","4.7"],["Mobile","Mobile App Development with React Native","Build polished cross-platform apps with real product workflows.","Fatima Bello","4.8"]];
-const steps=[["01","Choose your path","Tell Tekora what you want to learn, build or become."],["02","Learn by doing","Take interactive lessons, labs, practical tasks and project challenges."],["03","Build with others","Find peers, mentors and teams working toward similar goals."],["04","Prove your skills","Turn completed projects and assessments into trusted skill evidence."]];
-const footerGroups=[
-  ["Learn",["Courses","Projects","Labs","Workshops","Learning paths"]],
-  ["Create",["Teach on Tekora","Creator studio","Mentorship","Creator earnings","Community"]],
-  ["Opportunities",["Internships","Careers","Industry challenges","Student teams","Ventures"]],
-  ["Platform",["Developer API","Bots & agents","Documentation","Universities","For industry"]],
+const capabilities = [
+  ["01", "Academic Tutor", "Understand difficult topics, work through examples and get help when class notes are not enough.", "Ask Tekora"],
+  ["02", "Project Work", "Discover projects by programme and specialization, then understand every step of what you are building.", "Explore projects"],
+  ["03", "Research & Thesis", "Get structured support for topics, methodology, references, analysis, writing and defense preparation.", "Research better"],
+  ["04", "Practicals", "Turn theory into hands-on mini projects, simulations and lab-style activities you can actually complete.", "Start building"],
+  ["05", "Learning", "Go deeper with structured lessons and courses when you need a complete learning path.", "Explore learning"],
+  ["06", "Opportunities", "Connect your learning and practical work to workshops, internships, mentors and industry challenges.", "Find opportunities"],
 ];
 
-export default function HomePage(){
-  return <main className="premiumHome">
-    <SiteHeader />
-    <section className="premiumHeroLight"><div className="premiumHeroInner">
-      <div className="premiumHeroCopy"><span className="premiumKicker">SKILLS FOR A BRIGHTER TOMORROW</span><h1>Learn. Build. Create.<span>A brighter you.</span></h1><p>Tekora is an all-in-one learning and professional platform for engineers, creators and problem-solvers. Learn practical skills, build real projects, meet people on your path and turn what you can do into opportunity.</p><div className="premiumHeroActions"><Link href="/onboarding" className="premiumPrimaryCta">Start learning free <span>→</span></Link><Link href="/creator/courses/new" className="premiumSecondaryCta">Become a creator</Link></div><div className="premiumStats">{stats.map(([value,label])=><div key={label}><strong>{value}</strong><span>{label}</span></div>)}</div></div>
-      <div className="premiumHeroVisual"><div className="visualOrb visualOrbOne"/><div className="visualOrb visualOrbTwo"/><div className="visualMainCard"><div className="visualMainTopbar"><span className="visualDot"/><span>Learning workspace</span><span>•••</span></div><div className="visualMainBody"><div className="visualAvatar">T</div><p className="visualLabel">CURRENT PATH</p><h3>Embedded Systems & IoT</h3><div className="visualProgress"><span/></div><div className="visualMetrics"><div><strong>68%</strong><span>Progress</span></div><div><strong>12</strong><span>Labs</span></div><div><strong>4</strong><span>Projects</span></div></div><div className="visualLessonCard"><span>Next practical</span><strong>ESP32 Sensor Dashboard</strong><small>Build · Test · Submit evidence</small></div></div></div><div className="floatingCard floatingBuild"><span className="floatingIcon">⌘</span><div><strong>Build real projects</strong><small>Turn knowledge into real-world skills.</small></div></div><div className="floatingCard floatingExperts"><span className="floatingIcon">◎</span><div><strong>Learn from experts</strong><small>Industry creators. Practical lessons.</small></div></div><div className="floatingCard floatingProgress"><span className="floatingIcon">↗</span><div><strong>Your progress</strong><small>Keep going — 78% complete.</small></div></div></div>
-    </div></section>
+const programmes = [
+  ["EE", "Electrical Engineering", "Power · Control · Electronics · Renewable Energy · MATLAB"],
+  ["CE", "Computer Engineering", "Embedded Systems · IoT · Digital Systems · Networks"],
+  ["SE", "Software Engineering", "Web · Mobile · Backend · Cloud · AI"],
+  ["ME", "Mechanical Engineering", "Design · Manufacturing · Thermodynamics · Automation"],
+  ["CS", "Computer Science", "Programming · Algorithms · Databases · AI & Data"],
+  ["BE", "Built Environment", "Construction · Quantity Surveying · Architecture · Infrastructure"],
+];
 
-    <section className="premiumTrust"><p>BUILT FOR MODERN LEARNING, CREATION AND CAREERS</p><div>{["AI-ready","API-first","Project-based","Creator-led","Career-connected","Community-powered"].map(item=><span key={item}>{item}</span>)}</div></section>
-    <section id="platform" className="premiumFeatureStrip">{features.map(([number,title,copy])=><article key={title}><span>{number}</span><div><h3>{title}</h3><p>{copy}</p></div></article>)}</section>
+const projectExamples = [
+  ["POWER", "IoT Transformer Health Monitor", "Monitor transformer condition, oil level and electrical parameters with embedded hardware."],
+  ["ENERGY", "Smart Energy Meter", "Measure, analyze and visualize electrical energy usage with a practical prototype."],
+  ["CONTROL", "Automatic Phase Selector", "Detect source conditions and automatically select the healthiest electrical phase."],
+  ["RENEWABLE", "Solar PV Performance Monitor", "Track solar generation and study system performance using real engineering metrics."],
+  ["ELECTRONICS", "Cable Fault Locator", "Detect and communicate cable fault points with a practical sensing system."],
+  ["SOFTWARE", "Campus Lecture Reminder", "Build a simple university timetable and SMS reminder platform."],
+];
 
-    <section className="premiumHowSection"><div className="premiumSectionHeading"><div><span className="premiumKicker">HOW TEKORA WORKS</span><h2>A path from curiosity to capability.</h2><p>Everything on Tekora is designed around doing, collaborating and proving what you can do.</p></div></div><div className="premiumStepsGrid">{steps.map(([number,title,copy])=><article key={title}><span>{number}</span><h3>{title}</h3><p>{copy}</p></article>)}</div></section>
+const researchTools = [
+  "Topic discovery & refinement",
+  "Proposal and chapter structure",
+  "IEEE reference guidance",
+  "Methodology planning",
+  "MATLAB / Simulink support",
+  "Data analysis & interpretation",
+  "Figures, diagrams & presentation",
+  "Defense preparation",
+];
 
-    <section className="premiumCoursesSection"><div className="premiumSectionHeading"><div><span className="premiumKicker">LEARN FROM PEOPLE WHO BUILD</span><h2>Featured courses</h2><p>Start with practical courses from top creators and working professionals.</p></div><Link href="/learn">Browse all courses →</Link></div><div className="premiumCourseGrid">{sampleCourses.map(([badge,title,copy,creator,rating],index)=><article className="premiumCourseCard" key={title}><div className={`premiumCourseThumb thumb${index+1}`}><span>{badge}</span><strong>{index===0?"</>":index===1?"AI":index===2?"☁":"▣"}</strong></div><div className="premiumCourseBody"><h3>{title}</h3><p>{copy}</p><div className="premiumCourseMeta"><span>{creator}</span><strong>★ {rating}</strong></div></div></article>)}</div></section>
+const institutionTools = [
+  ["Programme spaces", "Organize learning resources, subjects, labs and project areas around real programmes."],
+  ["Practical delivery", "Support workshops, mini-projects, laboratory preparation and hands-on learning."],
+  ["Student progress", "Give students one place to connect study, practical work, research and career development."],
+];
 
-    <section className="premiumCreatorSection"><div className="creatorShowcase"><span className="premiumKicker">FOR ENGINEERS, EXPERTS & PRACTITIONERS</span><h2>Teach what you know. Earn from what you know.</h2><p>Create practical courses, mentor learners, run workshops and build a reputation around real expertise.</p><div className="creatorBenefits"><span>Course marketplace</span><span>Mentorship</span><span>Workshops</span><span>Creator analytics</span></div><Link href="/creator/courses/new" className="premiumPrimaryCta">Start creating →</Link></div><div className="creatorEarningsCard"><span className="smallLabel">CREATOR DASHBOARD</span><h3>Your knowledge has value.</h3><div className="earningsFigure"><strong>GHS 4,860</strong><span>Estimated monthly earnings</span></div><div className="creatorMiniStats"><div><strong>1,284</strong><span>Learners</span></div><div><strong>4.9</strong><span>Rating</span></div><div><strong>6</strong><span>Courses</span></div></div></div></section>
+const footerGroups = [
+  ["Students", ["My Programme", "Tekora AI", "Projects", "Practicals", "Research", "Learn"]],
+  ["Build", ["Project Library", "Mini Projects", "MATLAB", "Simulations", "Build Kits", "Workshops"]],
+  ["Connect", ["Community", "Mentors", "Opportunities", "Universities", "For Industry", "Portfolio"]],
+  ["Tekora", ["About", "Creators", "Developer Platform", "Help Center", "Privacy", "Terms"]],
+];
 
-    <section id="community" className="premiumCommunitySection"><div><span className="premiumKicker">LEARN WITH PEOPLE ON YOUR PATH</span><h2>Find your people. Build your circle.</h2><p>Discover learners with similar goals, join study circles, form project teams and grow those teams into real products, ventures and companies.</p><Link href="/onboarding" className="premiumPrimaryCta">Join the community →</Link></div><div className="premiumCommunityBoard"><div className="communityPerson"><span>AK</span><div><strong>Ama K.</strong><small>Computer Engineering · IoT</small></div><em>82% match</em></div><div className="communityPerson"><span>KM</span><div><strong>Kojo M.</strong><small>Electrical Engineering · Solar</small></div><em>78% match</em></div><div className="communityPerson"><span>EN</span><div><strong>Esi N.</strong><small>Software Engineering · React</small></div><em>74% match</em></div><div className="communityTeamCard"><span>PROJECT TEAM</span><strong>Smart Energy Monitor</strong><small>3 builders · Looking for a mobile developer</small></div></div></section>
+export default function HomePage() {
+  return (
+    <main className="tkHome">
+      <SiteHeader />
 
-    <section className="premiumOpportunitySection"><div className="premiumSectionHeading"><div><span className="premiumKicker">LEARNING SHOULD LEAD SOMEWHERE</span><h2>Move from skill to real opportunity.</h2></div></div><div className="opportunityGrid"><article><span>WORKSHOPS</span><h3>Hands-on sessions near you.</h3><p>Book physical workshops, labs and bootcamps with trusted creators and partner institutions.</p></article><article><span>INTERNSHIPS</span><h3>Get matched by what you can do.</h3><p>Build a portfolio of verified projects and practical skills that companies can actually understand.</p></article><article><span>CHALLENGES</span><h3>Solve real industry problems.</h3><p>Join sponsored challenges, collaborate with teams and turn strong ideas into products or ventures.</p></article></div></section>
+      <section className="tkHero">
+        <div className="tkHeroInner">
+          <div className="tkHeroCopy">
+            <span className="tkEyebrow">BUILT FOR TERTIARY EDUCATION</span>
+            <h1>Your university journey, <span>powered by Tekora.</span></h1>
+            <p>
+              Learn difficult subjects, understand MATLAB, find project ideas, work through your thesis, build practical systems, meet people in your field and move toward real opportunities—all in one place.
+            </p>
+            <div className="tkHeroActions">
+              <Link href="/sign-up" className="premiumPrimaryCta">Start free →</Link>
+              <Link href="#explore" className="premiumSecondaryCta">Explore Tekora</Link>
+            </div>
+            <div className="tkHeroTrust">
+              <span>Academic support</span><span>Project guidance</span><span>Research help</span><span>Practical skills</span>
+            </div>
+          </div>
 
-    <section className="premiumDeveloperSection"><div><span className="premiumKicker">TEKORA DEVELOPER PLATFORM</span><h2>Build learning tools on top of Tekora.</h2><p>Our API-first architecture will let developers create tutors, bots, agents, university integrations and new educational experiences around learner-approved data.</p><div className="developerActions"><Link href="#" className="premiumPrimaryCta">Explore the API →</Link><Link href="#" className="premiumSecondaryCta">Read documentation</Link></div></div><div className="apiPreview"><div className="apiTop"><span>GET</span><code>/api/v1/users/:username/skills</code></div><pre>{`{\n  "learner": "ama-k",\n  "skills": [\n    { "name": "ESP32", "level": 4 },\n    { "name": "IoT", "level": 3 }\n  ]\n}`}</pre></div></section>
+          <div className="tkHeroWorkspace" aria-label="Tekora student workspace preview">
+            <div className="tkWorkspaceTop">
+              <span className="tkWorkspaceLogo">T</span>
+              <div><strong>Electrical Engineering</strong><small>Level 400 · Student workspace</small></div>
+              <span className="tkWorkspaceStatus">Active</span>
+            </div>
+            <div className="tkWorkspaceQuestion">
+              <small>WHAT DO YOU NEED HELP WITH?</small>
+              <strong>Ask Tekora about your studies.</strong>
+              <div><span>Explain circuit analysis...</span><button>Ask →</button></div>
+            </div>
+            <div className="tkWorkspaceGrid">
+              <article><span>AI</span><div><strong>Academic Tutor</strong><small>Explain, solve, learn</small></div></article>
+              <article><span>PJ</span><div><strong>Project Work</strong><small>Find & build projects</small></div></article>
+              <article><span>R</span><div><strong>Research</strong><small>Thesis support</small></div></article>
+              <article><span>LAB</span><div><strong>Practicals</strong><small>Build real skills</small></div></article>
+            </div>
+            <div className="tkWorkspaceProgramme">
+              <div><small>MY PROGRAMME</small><strong>Power Systems · MATLAB · Control · Electronics</strong></div>
+              <Link href="/dashboard">Open dashboard →</Link>
+            </div>
+          </div>
+        </div>
+      </section>
 
-    <section id="industry" className="premiumIndustrySection"><div><span className="premiumKicker">FROM LEARNING TO OPPORTUNITY</span><h2>Skills should lead somewhere.</h2></div><p>Tekora connects portfolios, verified practical evidence, creators, internships, workshops and industry challenges so learners can turn capability into opportunity.</p></section>
+      <section className="tkProofBar">
+        <span>Learn your subjects</span><i>•</i><span>Build your project</span><i>•</i><span>Research better</span><i>•</i><span>Practice with real systems</span><i>•</i><span>Prepare for work</span>
+      </section>
 
-    <section className="premiumFinalCta"><span className="premiumKicker">YOUR NEXT SKILL CAN CHANGE YOUR DIRECTION</span><h2>Start learning. Start building. Start becoming.</h2><p>Join Tekora and build a learning identity that grows with you—from student to professional, creator, founder or employer.</p><div className="premiumHeroActions"><Link href="/onboarding" className="premiumPrimaryCta">Create your free profile →</Link><Link href="/learn" className="premiumSecondaryCta">Explore courses</Link></div></section>
+      <section id="explore" className="tkSection tkCapabilitySection">
+        <div className="tkSectionHead">
+          <div><span className="tkEyebrow">ONE PLATFORM FOR THE WHOLE JOURNEY</span><h2>More than courses. More than notes.</h2></div>
+          <p>Tekora follows the real problems students face throughout tertiary education—not just what happens inside one online course.</p>
+        </div>
+        <div className="tkCapabilityGrid">
+          {capabilities.map(([number,title,copy,action]) => (
+            <article key={title}>
+              <span className="tkNumber">{number}</span>
+              <h3>{title}</h3>
+              <p>{copy}</p>
+              <Link href={title === "Learning" ? "/learn" : "/sign-up"}>{action} →</Link>
+            </article>
+          ))}
+        </div>
+      </section>
 
-    <footer className="premiumFooter"><div className="premiumFooterTop"><div className="footerBrandColumn"><Link href="/" className="premiumBrand"><span className="premiumBrandIcon">T</span><span>Tekora</span></Link><p>Learn practical skills. Build real things. Find your people. Prove what you can do.</p><span className="footerTagline">Learn. Build. Prove. Work.</span></div>{footerGroups.map(([title,items])=><div className="footerLinkGroup" key={title as string}><strong>{title}</strong>{(items as string[]).map(item=><Link href="#" key={item}>{item}</Link>)}</div>)}</div><div className="premiumFooterBottom"><span>© {new Date().getFullYear()} Tekora. Built for people who want to do more than just learn.</span><div><Link href="#">Privacy</Link><Link href="#">Terms</Link><Link href="#">Help</Link></div></div></footer>
-  </main>
+      <section className="tkProgrammeSection">
+        <div className="tkProgrammeInner">
+          <div className="tkSectionHead compact">
+            <div><span className="tkEyebrow">PERSONALIZED AROUND YOUR PROGRAMME</span><h2>Tekora should understand what you study.</h2></div>
+            <p>Choose your institution, programme and level. Tekora can then organize the subjects, projects, practicals and research support that actually matter to you.</p>
+          </div>
+          <div className="tkProgrammeGrid">
+            {programmes.map(([code,title,copy]) => (
+              <article key={title}><span>{code}</span><div><h3>{title}</h3><p>{copy}</p></div><b>→</b></article>
+            ))}
+          </div>
+          <div className="tkProgrammeNote">More programmes can be added university by university as Tekora grows.</div>
+        </div>
+      </section>
+
+      <section className="tkSection tkTutorSection">
+        <div className="tkTutorCopy">
+          <span className="tkEyebrow">TEKORA AI · YOUR ACADEMIC COMPANION</span>
+          <h2>Ask what your lecturer didn’t have time to explain.</h2>
+          <p>Tekora AI should work inside the student’s academic context. It can explain concepts, help debug MATLAB, break down calculations, guide project decisions and support research without becoming a shortcut around understanding.</p>
+          <div className="tkPromptChips"><span>Explain nodal analysis</span><span>Why is my MATLAB code failing?</span><span>Help structure my methodology</span><span>How does a transformer relay work?</span></div>
+          <Link href="/sign-up" className="premiumPrimaryCta">Meet Tekora AI →</Link>
+        </div>
+        <div className="tkTutorPanel">
+          <div className="tkTutorHeader"><span>T</span><div><strong>Tekora AI</strong><small>Academic & practical assistant</small></div></div>
+          <div className="tkTutorMessage student">Can you explain why current leads voltage in a capacitor?</div>
+          <div className="tkTutorMessage ai"><small>TEKORA</small><p>Think of the capacitor as reacting immediately to a change in voltage. Current flows while the capacitor is charging or discharging, so the current waveform reaches its peak earlier than the voltage waveform.</p><div className="tkTutorActions"><span>Show phasor view</span><span>Give me an example</span></div></div>
+          <div className="tkTutorInput"><span>Ask a follow-up...</span><button>↑</button></div>
+        </div>
+      </section>
+
+      <section className="tkProjectsSection">
+        <div className="tkSection tkProjectsInner">
+          <div className="tkSectionHead">
+            <div><span className="tkEyebrow">PROJECT WORK, ORGANIZED PROPERLY</span><h2>Find projects by field. Understand what you are building.</h2></div>
+            <p>Not just a list of titles. Each project can connect the idea, objectives, system design, components, implementation, code, testing, report guidance and defense preparation.</p>
+          </div>
+          <div className="tkProjectGrid">
+            {projectExamples.map(([tag,title,copy],index) => (
+              <article key={title}>
+                <div className={`tkProjectVisual projectVisual${index + 1}`}><span>{tag}</span><strong>{title.split(" ").slice(0,2).map(word => word[0]).join("")}</strong></div>
+                <div className="tkProjectBody"><small>{tag} PROJECT</small><h3>{title}</h3><p>{copy}</p><div><Link href="/sign-up">View project →</Link><span>Guide · BOM · Build</span></div></div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="tkSection tkPracticalSplit">
+        <div className="tkPracticalMain">
+          <span className="tkEyebrow">MINI PROJECTS & PRACTICALS</span>
+          <h2>Build something small this week.</h2>
+          <p>Tekora practicals turn classroom concepts into compact systems students can build, simulate, test and understand.</p>
+          <div className="tkMiniProjectList">
+            <article><span className="tkMiniIcon">DC</span><div><strong>Temperature Controlled DC Fan</strong><small>45–60 min · Beginner · Arduino</small></div><Link href="/sign-up">Build →</Link></article>
+            <article><span className="tkMiniIcon">IoT</span><div><strong>ESP8266 Room Monitor</strong><small>1–2 hours · Intermediate · IoT</small></div><Link href="/sign-up">Build →</Link></article>
+            <article><span className="tkMiniIcon">PV</span><div><strong>Solar Battery Monitor</strong><small>1–2 hours · Intermediate · Energy</small></div><Link href="/sign-up">Build →</Link></article>
+          </div>
+        </div>
+        <aside className="tkKitCard">
+          <span className="tkEyebrow">BUILD KITS</span>
+          <h3>Need the components too?</h3>
+          <p>Students should be able to move from a Tekora project directly to the parts they need—without hunting component by component.</p>
+          <div className="tkKitParts"><span>Arduino / ESP</span><span>Sensors</span><span>Resistors</span><span>Relays</span><span>Jumpers</span><span>Breadboard</span></div>
+          <Link href="/sign-up" className="premiumPrimaryCta">Explore build kits →</Link>
+        </aside>
+      </section>
+
+      <section className="tkResearchSection">
+        <div className="tkSection tkResearchInner">
+          <div className="tkResearchCopy"><span className="tkEyebrow">RESEARCH & FINAL-YEAR PROJECT SUPPORT</span><h2>From research question to defense day.</h2><p>Tekora can guide students through the research process while keeping the student responsible for understanding, decisions and original academic work.</p><Link href="/sign-up" className="premiumPrimaryCta">Start a research workspace →</Link></div>
+          <div className="tkResearchGrid">{researchTools.map((tool,index)=><div key={tool}><span>{String(index+1).padStart(2,"0")}</span><strong>{tool}</strong></div>)}</div>
+        </div>
+      </section>
+
+      <section id="universities" className="tkSection tkUniversitySection">
+        <div className="tkUniversityCard">
+          <div className="tkUniversityCopy"><span className="tkEyebrow">FOR UNIVERSITIES & DEPARTMENTS</span><h2>Give students a practical layer around the curriculum.</h2><p>Tekora can become the place where a university’s programmes, subjects, projects, practicals, workshops and student development come together without replacing the institution’s existing systems.</p><div className="tkUniversityActions"><Link href="/sign-up" className="premiumPrimaryCta">Partner with Tekora →</Link><Link href="#" className="premiumSecondaryCta">See university use cases</Link></div></div>
+          <div className="tkUniversityTools">{institutionTools.map(([title,copy],index)=><article key={title}><span>{index+1}</span><div><h3>{title}</h3><p>{copy}</p></div></article>)}</div>
+        </div>
+      </section>
+
+      <section id="community" className="tkSection tkConnectSection">
+        <div className="tkSectionHead"><div><span className="tkEyebrow">DON’T STUDY IN ISOLATION</span><h2>Connect learning to people and opportunity.</h2></div><p>Your programme can become the bridge to peers, project teammates, mentors, workshops, internships and future employers.</p></div>
+        <div className="tkConnectGrid">
+          <article><span>PEOPLE</span><h3>Find students on your path.</h3><p>Meet people in the same programme, specialization or project area and build study or project teams.</p><Link href="/sign-up">Join the community →</Link></article>
+          <article><span>MENTORS</span><h3>Learn from people doing the work.</h3><p>Connect with engineers, professionals, lecturers and experienced creators for guidance.</p><Link href="/sign-up">Meet mentors →</Link></article>
+          <article><span>OPPORTUNITIES</span><h3>Turn capability into a next step.</h3><p>Discover internships, industrial attachments, workshops, challenges and graduate opportunities.</p><Link href="/sign-up">Explore opportunities →</Link></article>
+        </div>
+      </section>
+
+      <section className="tkFinalCta">
+        <div><span className="tkEyebrow">ONE PLACE FOR THE JOURNEY</span><h2>Learn. Build. Research. Prove. Work.</h2><p>Tekora is being built around what tertiary students actually need—from the lecture room to the project bench, thesis defense and first job.</p></div>
+        <Link href="/sign-up" className="premiumPrimaryCta">Create your Tekora profile →</Link>
+      </section>
+
+      <footer className="tkFooter">
+        <div className="tkFooterTop">
+          <div className="tkFooterBrand"><Link href="/" className="premiumBrand"><span className="premiumBrandIcon">T</span><span>Tekora</span></Link><p>The practical academic companion for tertiary education.</p><strong>Learn. Build. Research. Prove. Work.</strong></div>
+          {footerGroups.map(([title,items]) => <div className="tkFooterGroup" key={title as string}><strong>{title}</strong>{(items as string[]).map(item => <Link href="#" key={item}>{item}</Link>)}</div>)}
+        </div>
+        <div className="tkFooterBottom"><span>© {new Date().getFullYear()} Tekora.</span><span>Built for students who want to understand, build and move forward.</span></div>
+      </footer>
+    </main>
+  );
 }
