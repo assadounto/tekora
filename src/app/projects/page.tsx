@@ -1,11 +1,10 @@
 import Link from "next/link";
 import { SiteHeader } from "@/components/site-header";
-import { projectFields, projects } from "@/modules/projects/catalog";
+import { ProjectCatalog } from "@/components/project-catalog";
+import { projectFields } from "@/modules/projects/catalog";
 import "../premium-home.css";
 import "../premium-accessibility.css";
 import "./projects.css";
-
-const difficulties = ["All", "Simple", "Intermediate", "Advanced"];
 
 export default function ProjectsPage() {
   return (
@@ -37,36 +36,7 @@ export default function ProjectsPage() {
       </section>
 
       <section className="projectMarketSection" id="catalog">
-        <div className="projectMarketHead">
-          <div><span className="projectEyebrow">PROJECT LIBRARY</span><h2>Choose what you want to build.</h2><p>Start from your field, then choose the difficulty and style that fits you.</p></div>
-          <label className="projectSearch"><span>⌕</span><input placeholder="Search projects, fields, skills..." aria-label="Search projects" /></label>
-        </div>
-
-        <div className="projectFilterRow">
-          <div>{difficulties.map((item, index) => <button className={index === 0 ? "active" : ""} type="button" key={item}>{item}</button>)}</div>
-          <button type="button" className="projectFilterButton">All fields ▾</button>
-        </div>
-
-        <div className="projectGrid">
-          {projects.map((project, index) => (
-            <article className="projectCard" key={project.slug}>
-              <Link href={`/projects/${project.slug}`} className={`projectCardVisual projectVisual${(index % 4) + 1}`}>
-                <span>{project.field}</span>
-                <strong>{project.area}</strong>
-              </Link>
-              <div className="projectCardBody">
-                <div className="projectCardMeta"><span>{project.difficulty}</span><span>{project.time}</span></div>
-                <h3><Link href={`/projects/${project.slug}`}>{project.title}</Link></h3>
-                <p>{project.summary}</p>
-                <div className="projectSkillRow">{project.skills.slice(0, 3).map(skill => <span key={skill}>{skill}</span>)}</div>
-                <div className="projectCardFooter">
-                  <div className="projectModes">{project.mode.map(mode => <span key={mode}>{mode}</span>)}</div>
-                  <Link href={`/projects/${project.slug}`}>View project →</Link>
-                </div>
-              </div>
-            </article>
-          ))}
-        </div>
+        <ProjectCatalog />
       </section>
 
       <section className="projectRequestBanner">
