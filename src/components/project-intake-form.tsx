@@ -1,21 +1,67 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import { useRouter } from "next/navigation";
 import { projectFields } from "@/modules/projects/catalog";
 
 export function ProjectIntakeForm({ mode }: { mode: "request" | "create" }) {
+  const router = useRouter();
   const [saved, setSaved] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [access, setAccess] = useState("FREE");
 
-  function submit(event: FormEvent<HTMLFormElement>) {
+  async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    setSaved(false);
+    setError("");
+
     const form = new FormData(event.currentTarget);
-    const item = Object.fromEntries(form.entries());
-    const key = mode === "request" ? "tekora_project_requests" : "tekora_user_projects";
-    const current = JSON.parse(localStorage.getItem(key) ?? "[]");
-    current.unshift({ ...item, id: crypto.randomUUID(), createdAt: new Date().toISOString() });
-    localStorage.setItem(key, JSON.stringify(current));
-    setSaved(true);
-    event.currentTarget.reset();
+
+    if (mode === "request") {
+      const item = Object.fromEntries(form.entries());
+      const current = JSON.parse(localStorage.getItem("tekora_project_requests") ?? "[]");
+      current.unshift({ ...item, id: crypto.randomUUID(), createdAt: new Date().toISOString() });
+      localStorage.setItem("tekora_project_requests", JSON.stringify(current));
+      setSaved(true);
+      event.currentTarget.reset();
+      return;
+    }
+
+    setLoading(true);
+    const priceGhs = Number(form.get("price") ?? 0);
+    const payload = {
+      title: String(form.get("title") ?? ""),
+      summary: String(form.get("description") ?? ""),
+      description: String(form.get("support") ?? "") || undefined,
+      field: String(form.get("field") ?? ""),
+      area: String(form.get("area") ?? "") || undefined,
+      difficulty: String(form.get("difficulty") ?? "INTERMEDIATE").toUpperCase(),
+      modes: form.getAll("modes").map(String),
+      access,
+      price: access === "PAID" ? Math.round(priceGhs * 100) : undefined,
+      currency: "GHS",
+    };
+
+    const response = await fetch("/api/v1/projects", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    const result = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      if (response.status === 401) {
+        router.push("/sign-in");
+        return;
+      }
+      setError(result?.issues?.fieldErrors?.price?.[0] ?? result?.error ?? "Could not create project.");
+      setLoading(false);
+      return;
+    }
+
+    router.push(`/projects/manage/${result.project.id}`);
+    router.refresh();
   }
 
   return (
@@ -23,13 +69,34 @@ export function ProjectIntakeForm({ mode }: { mode: "request" | "create" }) {
       <div className="projectFormGrid">
         <label>Project title or idea<input name="title" required placeholder="e.g. Smart irrigation system" /></label>
         <label>Field<select name="field" required defaultValue=""><option value="" disabled>Select field</option>{projectFields.map(field => <option key={field}>{field}</option>)}</select></label>
-        <label>Difficulty<select name="difficulty" defaultValue="Intermediate"><option>Simple</option><option>Intermediate</option><option>Advanced</option></select></label>
+        <label>Area / specialization<input name="area" placeholder="e.g. Power Systems, Mobile Apps" /></label>
+        <label>Difficulty<select name="difficulty" defaultValue="INTERMEDIATE"><option value="SIMPLE">Simple</option><option value="INTERMEDIATE">Intermediate</option><option value="ADVANCED">Advanced</option></select></label>
         <label>Budget<input name="budget" placeholder="e.g. GHS 500" /></label>
         <label className="full">What should the project do?<textarea name="description" required rows={5} placeholder="Describe the problem, idea or expected result." /></label>
-        <label className="full">What help do you need?<textarea name="support" rows={4} placeholder="Components, circuit, code, MATLAB, fabrication, documentation, kit..." /></label>
+        <label className="full">What help or detail should the project include?<textarea name="support" rows={4} placeholder="Components, circuit, code, MATLAB, fabrication, documentation, kit..." /></label>
+
+        {mode === "create" ? (
+          <>
+            <fieldset className="full projectModeFieldset">
+              <legend>How can people build it?</legend>
+              <label><input type="checkbox" name="modes" value="GUIDED" defaultChecked /> Guided</label>
+              <label><input type="checkbox" name="modes" value="DIY" /> DIY</label>
+              <label><input type="checkbox" name="modes" value="KIT_READY" /> Kit-ready</label>
+            </fieldset>
+
+            <fieldset className="full projectModeFieldset">
+              <legend>Project access</legend>
+              <label><input type="radio" name="access" value="FREE" checked={access === "FREE"} onChange={() => setAccess("FREE")} /> Free</label>
+              <label><input type="radio" name="access" value="PAID" checked={access === "PAID"} onChange={() => setAccess("PAID")} /> Paid</label>
+            </fieldset>
+
+            {access === "PAID" ? <label className="full">Project price (GHS)<input name="price" type="number" min="1" step="0.01" required placeholder="e.g. 50.00" /></label> : null}
+          </>
+        ) : null}
       </div>
-      <button className="premiumPrimaryCta" type="submit">{mode === "request" ? "Submit project request →" : "Create my project →"}</button>
-      {saved ? <p className="projectFormSuccess">Saved for this prototype. We can connect this flow to the Tekora database next.</p> : null}
+      <button className="premiumPrimaryCta" type="submit" disabled={loading}>{loading ? "Creating project..." : mode === "request" ? "Submit project request →" : "Create project draft →"}</button>
+      {error ? <p className="formError">{error}</p> : null}
+      {saved ? <p className="projectFormSuccess">Project request saved on this device for the prototype.</p> : null}
     </form>
   );
 }
