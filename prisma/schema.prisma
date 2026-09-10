@@ -17,23 +17,27 @@ enum UserRole {
 }
 
 model User {
-  id          String       @id @default(cuid())
-  email       String       @unique
-  username    String?      @unique
-  name        String?
-  bio         String?
-  headline    String?
-  location    String?
-  avatarUrl   String?
-  onboardingCompleted Boolean @default(false)
-  roles       UserRoleLink[]
-  profile     Profile?
-  skills      UserSkill[]
-  interests   UserInterest[]
-  createdCourses Course[] @relation("CreatedCourses")
-  enrollments Enrollment[]
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  id                    String                 @id @default(cuid())
+  email                 String                 @unique
+  username              String?                @unique
+  name                  String?
+  bio                   String?
+  headline              String?
+  location              String?
+  avatarUrl             String?
+  onboardingCompleted   Boolean                @default(false)
+  roles                 UserRoleLink[]
+  profile               Profile?
+  skills                UserSkill[]
+  interests             UserInterest[]
+  createdCourses        Course[]               @relation("CreatedCourses")
+  enrollments           Enrollment[]
+  createdProjects       Project[]              @relation("CreatedProjects")
+  projectEntitlements   ProjectEntitlement[]
+  projectFavorites      ProjectFavorite[]
+  projectPhaseProgress  ProjectPhaseProgress[]
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
 }
 
 model UserRoleLink {
@@ -126,7 +130,6 @@ model UserInterest {
   @@index([interestId])
 }
 
-
 enum CourseStatus {
   DRAFT
   PUBLISHED
@@ -162,25 +165,25 @@ model CourseCategory {
 }
 
 model Course {
-  id          String       @id @default(cuid())
-  title       String
-  slug        String       @unique
-  description String?
+  id           String          @id @default(cuid())
+  title        String
+  slug         String          @unique
+  description  String?
   thumbnailUrl String?
-  status      CourseStatus @default(DRAFT)
-  access      CourseAccess @default(FREE)
-  price       Int?
-  currency    String       @default("GHS")
-  level       String?
-  creatorId   String
-  creator     User         @relation("CreatedCourses", fields: [creatorId], references: [id], onDelete: Cascade)
-  categoryId  String?
-  category    CourseCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
-  modules     CourseModule[]
-  enrollments Enrollment[]
-  publishedAt DateTime?
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  status       CourseStatus    @default(DRAFT)
+  access       CourseAccess    @default(FREE)
+  price        Int?
+  currency     String          @default("GHS")
+  level        String?
+  creatorId    String
+  creator      User            @relation("CreatedCourses", fields: [creatorId], references: [id], onDelete: Cascade)
+  categoryId   String?
+  category     CourseCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  modules      CourseModule[]
+  enrollments  Enrollment[]
+  publishedAt  DateTime?
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
 
   @@index([creatorId, status])
   @@index([categoryId, status])
@@ -200,19 +203,19 @@ model CourseModule {
 }
 
 model Lesson {
-  id          String        @id @default(cuid())
+  id          String           @id @default(cuid())
   title       String
   slug        String
   summary     String?
   position    Int
   durationMin Int?
-  isPreview   Boolean       @default(false)
+  isPreview   Boolean          @default(false)
   moduleId    String
-  module      CourseModule  @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  module      CourseModule     @relation(fields: [moduleId], references: [id], onDelete: Cascade)
   blocks      LessonBlock[]
   progress    LessonProgress[]
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
 
   @@unique([moduleId, position])
   @@unique([moduleId, slug])
@@ -232,12 +235,12 @@ model LessonBlock {
 }
 
 model Enrollment {
-  id          String   @id @default(cuid())
+  id          String           @id @default(cuid())
   userId      String
   courseId    String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  enrolledAt  DateTime @default(now())
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course      Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  enrolledAt  DateTime         @default(now())
   completedAt DateTime?
   progress    LessonProgress[]
 
@@ -256,4 +259,133 @@ model LessonProgress {
   updatedAt    DateTime   @updatedAt
 
   @@unique([enrollmentId, lessonId])
+}
+
+enum ProjectStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum ProjectAccess {
+  FREE
+  PAID
+}
+
+enum ProjectDifficulty {
+  SIMPLE
+  INTERMEDIATE
+  ADVANCED
+}
+
+enum ProjectMode {
+  DIY
+  GUIDED
+  KIT_READY
+}
+
+enum ProjectAcquisition {
+  OWNER
+  FREE
+  PURCHASE
+}
+
+model Project {
+  id           String               @id @default(cuid())
+  title        String
+  slug         String               @unique
+  summary      String
+  description  String?
+  field        String
+  area         String?
+  difficulty   ProjectDifficulty    @default(INTERMEDIATE)
+  modes        ProjectMode[]        @default([])
+  status       ProjectStatus        @default(DRAFT)
+  access       ProjectAccess        @default(FREE)
+  price        Int?
+  currency     String               @default("GHS")
+  kitPrice     Int?
+  creatorId    String
+  creator      User                 @relation("CreatedProjects", fields: [creatorId], references: [id], onDelete: Cascade)
+  phases       ProjectPhase[]
+  components   ProjectComponent[]
+  entitlements ProjectEntitlement[]
+  favorites    ProjectFavorite[]
+  publishedAt  DateTime?
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+
+  @@index([status, field])
+  @@index([creatorId, status])
+  @@index([access, status])
+}
+
+model ProjectPhase {
+  id          String                 @id @default(cuid())
+  projectId   String
+  project     Project                @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  title       String
+  description String
+  position    Int
+  progress    ProjectPhaseProgress[]
+  createdAt   DateTime               @default(now())
+  updatedAt   DateTime               @updatedAt
+
+  @@unique([projectId, position])
+}
+
+model ProjectComponent {
+  id             String   @id @default(cuid())
+  projectId      String
+  project        Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  name           String
+  quantity       Int      @default(1)
+  unit           String?
+  estimatedPrice Int?
+  note           String?
+  position       Int
+  createdAt      DateTime @default(now())
+
+  @@unique([projectId, position])
+}
+
+model ProjectEntitlement {
+  id          String             @id @default(cuid())
+  userId      String
+  user        User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  projectId   String
+  project     Project            @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  acquisition ProjectAcquisition
+  amountPaid  Int?
+  currency    String             @default("GHS")
+  acquiredAt  DateTime           @default(now())
+
+  @@unique([userId, projectId])
+  @@index([projectId])
+}
+
+model ProjectFavorite {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, projectId])
+  @@index([projectId])
+}
+
+model ProjectPhaseProgress {
+  id          String       @id @default(cuid())
+  userId      String
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  phaseId     String
+  phase       ProjectPhase @relation(fields: [phaseId], references: [id], onDelete: Cascade)
+  completed   Boolean      @default(false)
+  completedAt DateTime?
+  updatedAt   DateTime     @updatedAt
+
+  @@unique([userId, phaseId])
+  @@index([phaseId])
 }
