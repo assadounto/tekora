@@ -1,12 +1,30 @@
 import Link from "next/link";
 import { SiteHeader } from "@/components/site-header";
-import { ProjectCatalog } from "@/components/project-catalog";
+import { ProjectCatalog, type DatabaseProjectCard } from "@/components/project-catalog";
 import { projectFields } from "@/modules/projects/catalog";
+import { listPublishedProjects } from "@/modules/projects/service";
 import "../premium-home.css";
 import "../premium-accessibility.css";
 import "./projects.css";
 
-export default function ProjectsPage() {
+export const dynamic = "force-dynamic";
+
+export default async function ProjectsPage() {
+  const published = await listPublishedProjects();
+  const databaseProjects: DatabaseProjectCard[] = published.map((project) => ({
+    slug: project.slug,
+    title: project.title,
+    field: project.field,
+    area: project.area,
+    difficulty: project.difficulty,
+    modes: project.modes,
+    summary: project.summary,
+    access: project.access,
+    price: project.price,
+    currency: project.currency,
+    creatorName: project.creator.name ?? project.creator.username ?? "Tekora creator",
+  }));
+
   return (
     <main className="projectMarketPage">
       <SiteHeader />
@@ -15,20 +33,19 @@ export default function ProjectsPage() {
         <div>
           <span className="projectEyebrow">TEKORA PROJECT MARKETPLACE</span>
           <h1>Find a project. Understand it. Build it.</h1>
-          <p>Browse practical projects across engineering, software, mechanical work, carpentry and more. Choose something simple, challenge yourself with a harder build, follow a DIY guide, or get a complete kit when available.</p>
+          <p>Browse practical projects across engineering, software, mechanical work, carpentry and more. Some projects are free; others are paid by their creators. Sign in when you want to add one to your Tekora dashboard or create your own.</p>
           <div className="projectMarketActions">
             <Link className="premiumPrimaryCta" href="#catalog">Browse projects →</Link>
-            <Link className="premiumSecondaryCta" href="/projects/my">My Projects</Link>
-            <Link className="projectTextAction" href="/projects/request">Request a project →</Link>
-            <Link className="projectTextAction" href="/projects/new">Create your own →</Link>
+            <Link className="premiumSecondaryCta" href="/projects/new">Create a project</Link>
+            <Link className="projectTextAction" href="/projects/my">My Projects →</Link>
           </div>
         </div>
 
         <div className="projectHeroPanel">
-          <span>START YOUR WAY</span>
-          <article><strong>DIY</strong><p>Follow the guide and source your own components.</p></article>
-          <article><strong>Guided</strong><p>Work through clear phases with explanations and support.</p></article>
-          <article><strong>Kit-ready</strong><p>Use the project guide and get the matching component bundle.</p></article>
+          <span>PROJECT ACCESS</span>
+          <article><strong>Free projects</strong><p>Sign in and add the project to your dashboard immediately.</p></article>
+          <article><strong>Paid projects</strong><p>Preview the public project page, then unlock the full workspace after verified payment.</p></article>
+          <article><strong>Create your own</strong><p>Any logged-in Tekora user can create a project and choose Free or Paid before publishing.</p></article>
         </div>
       </section>
 
@@ -37,11 +54,11 @@ export default function ProjectsPage() {
       </section>
 
       <section className="projectMarketSection" id="catalog">
-        <ProjectCatalog />
+        <ProjectCatalog databaseProjects={databaseProjects} />
       </section>
 
       <section className="projectRequestBanner">
-        <div><span className="projectEyebrow">CAN'T FIND YOUR PROJECT?</span><h2>Tell Tekora what you want to build.</h2><p>Submit your programme, idea, budget, difficulty and what kind of help you need. We can turn good requests into new guided projects and kits.</p></div>
+        <div><span className="projectEyebrow">CAN'T FIND YOUR PROJECT?</span><h2>Tell Tekora what you want to build.</h2><p>Submit your programme, idea, budget, difficulty and what kind of help you need. Good requests can become new guided projects in the marketplace.</p></div>
         <Link className="premiumPrimaryCta" href="/projects/request">Request a project →</Link>
       </section>
     </main>
