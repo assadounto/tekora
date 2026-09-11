@@ -32,3 +32,10 @@ export function adminProjectRequests() {
     },
   });
 }
+
+export function updateProjectRequestStatus(requestId: string, status: "SUBMITTED" | "REVIEWING" | "APPROVED" | "DECLINED" | "FULFILLED") {
+  return db.projectRequest.update({
+    where: { id: requestId },
+    data: { status },
+  });
+}
