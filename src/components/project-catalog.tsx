@@ -72,8 +72,8 @@ export function ProjectCatalog({ databaseProjects = [] }: { databaseProjects?: D
   return (
     <>
       <div className="projectMarketHead">
-        <div><span className="projectEyebrow">PROJECT LIBRARY</span><h2>Choose what you want to build.</h2><p>Every project here is a published Tekora project with a real creator and access type.</p></div>
-        <div className="projectMarketTools"><label className="projectSearch"><span>⌕</span><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search projects, fields, creators..." aria-label="Search projects" /></label><Link href="/projects/my" className="projectMyProjectsLink">My Projects →</Link></div>
+        <div><span className="projectEyebrow">PROJECT LIBRARY</span><h2>Choose what you want to build.</h2><p>Every listing is an official Tekora project, available as free or paid access.</p></div>
+        <div className="projectMarketTools"><label className="projectSearch"><span>⌕</span><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search projects, fields, skills..." aria-label="Search projects" /></label><Link href="/projects/my" className="projectMyProjectsLink">My Projects →</Link></div>
       </div>
 
       <div className="projectFilterRow">
@@ -84,7 +84,7 @@ export function ProjectCatalog({ databaseProjects = [] }: { databaseProjects?: D
       <div className="projectResultCount">{filtered.length} published project{filtered.length === 1 ? "" : "s"}</div>
 
       {filtered.length === 0 ? (
-        <div className="projectNoResults"><strong>No published projects match yet.</strong><p>Create and publish a project, change the filters, or request something you want to build.</p><Link href="/projects/new">Create the first project →</Link></div>
+        <div className="projectNoResults"><strong>No published projects match yet.</strong><p>Try another filter, or tell Tekora what project you want and the budget you have.</p><Link href="/projects/request">Request a project →</Link></div>
       ) : (
         <div className="projectGrid">
           {filtered.map((project, index) => (
