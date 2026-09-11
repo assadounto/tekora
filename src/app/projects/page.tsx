@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { auth } from "@/auth";
+import { isAdminUser } from "@/lib/admin";
 import { SiteHeader } from "@/components/site-header";
 import { ProjectCatalog, type DatabaseProjectCard } from "@/components/project-catalog";
 import { projectFields } from "@/modules/projects/catalog";
@@ -10,6 +12,8 @@ import "./projects.css";
 export const dynamic = "force-dynamic";
 
 export default async function ProjectsPage() {
+  const session = await auth();
+  const isAdmin = session?.user?.id ? await isAdminUser(session.user.id) : false;
   const published = await listPublishedProjects();
   const databaseProjects: DatabaseProjectCard[] = published.map((project) => ({
     slug: project.slug,
@@ -22,7 +26,7 @@ export default async function ProjectsPage() {
     access: project.access,
     price: project.price,
     currency: project.currency,
-    creatorName: project.creator.name ?? project.creator.username ?? "Tekora creator",
+    creatorName: "Tekora",
   }));
 
   return (
@@ -33,19 +37,20 @@ export default async function ProjectsPage() {
         <div>
           <span className="projectEyebrow">TEKORA PROJECT MARKETPLACE</span>
           <h1>Find a project. Understand it. Build it.</h1>
-          <p>Browse practical projects across engineering, software, mechanical work, carpentry and more. Some projects are free; others are paid by their creators. Sign in when you want to add one to your Tekora dashboard or create your own.</p>
+          <p>Browse practical projects across engineering, software, mechanical work, carpentry and more. Projects can be free or paid. Sign in to add free projects or unlock paid projects and keep them in your dashboard.</p>
           <div className="projectMarketActions">
             <Link className="premiumPrimaryCta" href="#catalog">Browse projects →</Link>
-            <Link className="premiumSecondaryCta" href="/projects/new">Create a project</Link>
-            <Link className="projectTextAction" href="/projects/my">My Projects →</Link>
+            <Link className="premiumSecondaryCta" href="/projects/my">My Projects</Link>
+            <Link className="projectTextAction" href="/projects/request">Request a Project →</Link>
+            {isAdmin ? <Link className="projectTextAction" href="/projects/new">Admin: Create Project →</Link> : null}
           </div>
         </div>
 
         <div className="projectHeroPanel">
-          <span>PROJECT ACCESS</span>
-          <article><strong>Free projects</strong><p>Sign in and add the project to your dashboard immediately.</p></article>
-          <article><strong>Paid projects</strong><p>Preview the public project page, then unlock the full workspace after verified payment.</p></article>
-          <article><strong>Create your own</strong><p>Any logged-in Tekora user can create a project and choose Free or Paid before publishing.</p></article>
+          <span>HOW IT WORKS</span>
+          <article><strong>Free projects</strong><p>Sign in and add the full project workspace to your account immediately.</p></article>
+          <article><strong>Paid projects</strong><p>Preview first, then unlock the complete workspace after payment.</p></article>
+          <article><strong>Need another project?</strong><p>Submit the project you want, your field and your budget for Tekora to review.</p></article>
         </div>
       </section>
 
@@ -58,7 +63,7 @@ export default async function ProjectsPage() {
       </section>
 
       <section className="projectRequestBanner">
-        <div><span className="projectEyebrow">CAN'T FIND YOUR PROJECT?</span><h2>Tell Tekora what you want to build.</h2><p>Submit your programme, idea, budget, difficulty and what kind of help you need. Good requests can become new guided projects in the marketplace.</p></div>
+        <div><span className="projectEyebrow">CAN'T FIND YOUR PROJECT?</span><h2>Tell Tekora what you want to build.</h2><p>Submit your idea, field, budget, difficulty and support needed. You do not publish projects yourself—Tekora reviews requests and creates marketplace projects.</p></div>
         <Link className="premiumPrimaryCta" href="/projects/request">Request a project →</Link>
       </section>
     </main>
