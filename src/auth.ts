@@ -17,11 +17,19 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const parsed = credentialsSchema.safeParse(credentials);
         if (!parsed.success) return null;
 
-        const user = await db.user.findUnique({
-          where: { email: parsed.data.email.toLowerCase() },
-        });
-
+        const email = parsed.data.email.toLowerCase();
+        const user = await db.user.findUnique({ where: { email } });
         if (!user) return null;
+
+        const adminEmail = process.env.TEKORA_ADMIN_EMAIL?.trim().toLowerCase();
+        if (adminEmail && adminEmail === email) {
+          await db.userRoleLink.upsert({
+            where: { userId_role: { userId: user.id, role: "ADMIN" } },
+            update: {},
+            create: { userId: user.id, role: "ADMIN" },
+          });
+        }
+
         return { id: user.id, email: user.email, name: user.name };
       },
     }),
