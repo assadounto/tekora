@@ -17,13 +17,11 @@ export default async function AdminSalesPage() {
       take: 200,
       include: {
         user: { select: { name: true, username: true, email: true } },
-        project: { select: { title: true } },
-        course: { select: { title: true } },
       },
     }),
     db.purchase.aggregate({ _count: true, _sum: { amount: true } }),
-    db.purchase.aggregate({ where: { target: "PROJECT" }, _count: true, _sum: { amount: true } }),
-    db.purchase.aggregate({ where: { target: "COURSE" }, _count: true, _sum: { amount: true } }),
+    db.purchase.aggregate({ where: { targetType: "PROJECT" }, _count: true, _sum: { amount: true } }),
+    db.purchase.aggregate({ where: { targetType: "COURSE" }, _count: true, _sum: { amount: true } }),
   ]);
 
   return (
@@ -36,7 +34,7 @@ export default async function AdminSalesPage() {
       </section>
 
       {sales.length === 0 ? <div className="adminEmpty"><h2>No paid sales yet.</h2><p>Verified Paystack purchases will appear here automatically.</p></div> : (
-        <div className="adminTableWrap"><table className="adminTable"><thead><tr><th>Date</th><th>Buyer</th><th>Type</th><th>Item</th><th>Amount</th><th>Provider</th><th>Reference</th></tr></thead><tbody>{sales.map(sale => <tr key={sale.id}><td>{sale.paidAt.toLocaleDateString()}<small>{sale.paidAt.toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"})}</small></td><td><strong>{sale.user.name ?? sale.user.username ?? "User"}</strong><small>{sale.user.email}</small></td><td><span className="adminBadge">{pretty(sale.target)}</span></td><td>{sale.project?.title ?? sale.course?.title ?? "Removed item"}</td><td className="adminMoney">{money(sale.amount, sale.currency)}</td><td>{sale.provider}</td><td><small>{sale.reference}</small></td></tr>)}</tbody></table></div>
+        <div className="adminTableWrap"><table className="adminTable"><thead><tr><th>Date</th><th>Buyer</th><th>Type</th><th>Item</th><th>Amount</th><th>Provider</th><th>Reference</th></tr></thead><tbody>{sales.map(sale => <tr key={sale.id}><td>{sale.paidAt.toLocaleDateString()}<small>{sale.paidAt.toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"})}</small></td><td><strong>{sale.user.name ?? sale.user.username ?? "User"}</strong><small>{sale.user.email}</small></td><td><span className="adminBadge">{pretty(sale.targetType)}</span></td><td><strong>{sale.title}</strong><small>{sale.targetId}</small></td><td className="adminMoney">{money(sale.amount, sale.currency)}</td><td>Paystack</td><td><small>{sale.reference}</small></td></tr>)}</tbody></table></div>
       )}
       <p className="adminNote">Showing the 200 most recent verified purchases. Free project access and free course enrollments are not counted as sales.</p>
     </div>
