@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
@@ -8,7 +9,7 @@ import "./admin.css";
 
 export const dynamic = "force-dynamic";
 
-export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+export default async function AdminLayout({ children }: { children: ReactNode }) {
   const session = await auth();
   if (!session?.user?.id) redirect("/sign-in");
   if (!(await isAdminUser(session.user.id))) redirect("/dashboard");
@@ -32,6 +33,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       </aside>
       <section className="adminMain">
         <header className="adminMobileBar"><Link href="/admin" className="adminMobileBrand"><span>T</span><strong>Admin</strong></Link><Link href="/dashboard">Dashboard</Link></header>
+        <div className="adminMobileNav"><AdminNav /></div>
         {children}
       </section>
     </main>
