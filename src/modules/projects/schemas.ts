@@ -23,4 +23,16 @@ export const createProjectSchema = z
     }
   });
 
+export const projectRequestSchema = z.object({
+  title: z.string().trim().min(3).max(120),
+  field: z.string().trim().min(2).max(100),
+  area: z.string().trim().max(100).optional(),
+  difficulty: z.enum(["SIMPLE", "INTERMEDIATE", "ADVANCED"]).default("INTERMEDIATE"),
+  description: z.string().trim().min(20).max(3000),
+  support: z.string().trim().max(2000).optional(),
+  budget: z.number().int().nonnegative().optional(),
+  currency: z.string().trim().length(3).default("GHS"),
+});
+
 export type CreateProjectInput = z.infer<typeof createProjectSchema>;
+export type ProjectRequestInput = z.infer<typeof projectRequestSchema>;
