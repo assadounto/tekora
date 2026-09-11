@@ -14,45 +14,33 @@ export default async function SignInPage({ searchParams }: { searchParams: Promi
         </Link>
 
         <div className="tekoraAuthStoryBody">
-          <span className="tekoraAuthEyebrow">WELCOME BACK TO YOUR LEARNING IDENTITY</span>
-          <h1>Keep learning.<span>Keep building.</span></h1>
-          <p>
-            Your courses, projects, skills, circles and opportunities live together on Tekora—so your progress follows you wherever you go next.
-          </p>
+          <span className="tekoraAuthEyebrow">WELCOME BACK</span>
+          <h1>Your projects and courses.<span>One Tekora account.</span></h1>
+          <p>Sign in to continue your project library, purchased courses, requests and progress from any device.</p>
 
           <div className="tekoraAuthProof">
-            <article><span>⌁</span><strong>Learn by doing</strong><small>Practical courses, projects and checkpoints.</small></article>
-            <article><span>◎</span><strong>Build your identity</strong><small>Skills and evidence that grow with you.</small></article>
-            <article><span>↗</span><strong>Find opportunity</strong><small>People, workshops, internships and work.</small></article>
+            <article><span>01</span><strong>Projects</strong><small>Free and purchased builds stay in your library.</small></article>
+            <article><span>02</span><strong>Courses</strong><small>Keep your learning and progress attached to your account.</small></article>
+            <article><span>03</span><strong>Requests</strong><small>Submit project ideas and track what you asked Tekora to build.</small></article>
           </div>
         </div>
 
-        <span className="tekoraAuthStoryFooter">Learn. Build. Prove. Work.</span>
+        <span className="tekoraAuthStoryFooter">Learn. Build. Own the skill.</span>
       </section>
 
       <section className="tekoraAuthPanel">
         <div className="tekoraAuthCard">
           <div className="tekoraAuthCardHeader">
             <span className="tekoraAuthEyebrow">SIGN IN</span>
-            <h2>Continue your Tekora journey.</h2>
-            <p>Use the email attached to your Tekora identity.</p>
+            <h2>Welcome back.</h2>
+            <p>Enter the email and password for your Tekora account.</p>
           </div>
 
-          {params.created === "1" ? (
-            <div className="tekoraCreatedNotice">Your Tekora identity is ready. Sign in to continue.</div>
-          ) : null}
+          {params.created === "1" ? <div className="tekoraCreatedNotice">Account created. Sign in with your email and password.</div> : null}
 
           <SignInForm />
 
-          <div className="tekoraAuthDivider">OR CONTINUE WITH</div>
-          <div className="tekoraSocialButtons">
-            <button className="tekoraSocialButton" type="button"><span>G</span> Google</button>
-            <button className="tekoraSocialButton" type="button"><span>⌘</span> GitHub</button>
-          </div>
-
-          <p className="tekoraAuthFootnote">
-            New to Tekora? <Link href="/sign-up">Create your free profile</Link>
-          </p>
+          <p className="tekoraAuthFootnote">New to Tekora? <Link href="/sign-up">Create an account</Link></p>
         </div>
       </section>
     </main>
