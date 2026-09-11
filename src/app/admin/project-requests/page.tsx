@@ -1,8 +1,6 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
-import { auth } from "@/auth";
-import { isAdminUser } from "@/lib/admin";
 import { adminProjectRequests } from "@/modules/projects/request-service";
+import { AdminRequestStatus } from "@/components/admin-request-status";
 
 export const dynamic = "force-dynamic";
 
@@ -11,21 +9,35 @@ function pretty(value: string) {
 }
 
 export default async function AdminProjectRequestsPage() {
-  const session = await auth();
-  if (!session?.user?.id) redirect("/sign-in");
-  if (!(await isAdminUser(session.user.id))) redirect("/dashboard");
-
   const requests = await adminProjectRequests();
+  const open = requests.filter(request => ["SUBMITTED", "REVIEWING"].includes(request.status)).length;
 
   return (
-    <main className="dashboardMain">
-      <header className="dashboardTopbar">
-        <div><p className="eyebrow">ADMIN · PROJECT REQUESTS</p><h1>What users want Tekora to build next.</h1></div>
-        <div style={{display:"flex",gap:10}}><Link className="headerCta" href="/projects/new">Create project</Link><Link className="headerCta" href="/dashboard">Dashboard</Link></div>
+    <div className="adminPage">
+      <header className="adminPageHead">
+        <div><span className="adminEyebrow">DEMAND · PROJECT REQUESTS</span><h1>Project Requests</h1><p>See what students want to build, what they can spend, and what support they need before you decide which Tekora projects to create next.</p></div>
+        <div className="adminHeadActions"><Link className="adminPrimary" href="/projects/new">+ Create project</Link></div>
       </header>
-      <section className="courseGrid">
-        {requests.length === 0 ? <div className="emptyState"><h2>No requests yet.</h2><p>User project requests and budgets will appear here.</p></div> : requests.map(request => <article className="courseCard" key={request.id}><span className="courseBadge">{pretty(request.status)}</span><h2>{request.title}</h2><p>{request.field}{request.area ? ` · ${request.area}` : ""} · {pretty(request.difficulty)}</p><p>{request.description}</p><p><strong>Budget:</strong> {request.budget ? `${request.currency} ${(request.budget / 100).toFixed(2)}` : "Not specified"}</p>{request.support ? <p><strong>Needs:</strong> {request.support}</p> : null}<p><strong>Requested by:</strong> {request.user.name ?? request.user.username ?? request.user.email}</p></article>)}
+
+      <section className="adminStats">
+        <article className="adminStat"><span>Total requests</span><strong>{requests.length}</strong><small>All student submissions</small></article>
+        <article className="adminStat"><span>Open</span><strong>{open}</strong><small>Submitted or reviewing</small></article>
+        <article className="adminStat"><span>Approved</span><strong>{requests.filter(request => request.status === "APPROVED").length}</strong><small>Good candidates to build</small></article>
+        <article className="adminStat"><span>Fulfilled</span><strong>{requests.filter(request => request.status === "FULFILLED").length}</strong><small>Requests turned into delivery</small></article>
       </section>
-    </main>
+
+      {requests.length === 0 ? <div className="adminEmpty"><h2>No requests yet.</h2><p>When users submit project ideas and budgets, they will appear here.</p></div> : (
+        <section className="adminRequestGrid">
+          {requests.map(request => <article className="adminRequestCard" key={request.id}>
+            <div className="adminRequestTop"><div><span className="adminEyebrow">{request.field}</span><h3>{request.title}</h3></div><span className={`adminStatus ${request.status.toLowerCase()}`}>{pretty(request.status)}</span></div>
+            <p>{request.description}</p>
+            <div className="adminRequestMeta"><span>{pretty(request.difficulty)}</span>{request.area ? <span>{request.area}</span> : null}<span>{request.budget ? `${request.currency} ${(request.budget / 100).toFixed(2)}` : "Budget not specified"}</span></div>
+            {request.support ? <p><strong>Support needed:</strong> {request.support}</p> : null}
+            <p><strong>Requested by:</strong> {request.user.name ?? request.user.username ?? request.user.email}<br/><small>{request.user.email} · {request.createdAt.toLocaleDateString()}</small></p>
+            <AdminRequestStatus requestId={request.id} currentStatus={request.status} />
+          </article>)}
+        </section>
+      )}
+    </div>
   );
 }
