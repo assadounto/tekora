@@ -46,7 +46,7 @@ export default async function DashboardPage() {
     ["L", "My Courses", "/learn"],
     ["RQ", "Request Project", "/projects/request"],
     ["P", "My Programme", "/programme"],
-    ...(admin ? [["AD", "Admin Courses", "/creator/courses"], ["+", "Admin Project", "/projects/new"]] : []),
+    ...(admin ? [["AD", "Admin Studio", "/admin"]] : []),
   ];
 
   const recommended = await db.project.findMany({
@@ -73,7 +73,7 @@ export default async function DashboardPage() {
         <header className="dashboardTopbarPremium">
           <Link href="/" className="dashboardMobileBrand"><span>T</span><span>Tekora</span></Link>
           <label className="dashboardSearch"><span>⌕</span><input aria-label="Search Tekora" placeholder="Search projects, courses, fields..." /></label>
-          <div className="dashboardTopbarActions">{admin ? <Link href="/projects/new" className="dashboardWelcomeAction">+ Admin Project</Link> : <Link href="/projects" className="dashboardWelcomeAction">Browse Projects</Link>}<span className="dashboardTopbarAvatar">{initials}</span></div>
+          <div className="dashboardTopbarActions">{admin ? <Link href="/admin" className="dashboardWelcomeAction">Admin Studio</Link> : <Link href="/projects" className="dashboardWelcomeAction">Browse Projects</Link>}<span className="dashboardTopbarAvatar">{initials}</span></div>
         </header>
 
         <div className="dashboardContent">
@@ -96,7 +96,7 @@ export default async function DashboardPage() {
             <article className="dashboardPrimaryCard"><span className="dashboardActionIcon">RQ</span><div><span className="dashboardCardLabel">REQUEST A PROJECT</span><h3>Can’t find what you need?</h3><p>Send Tekora your project idea, field, difficulty, budget and support needed.</p></div><Link href="/projects/request">Submit request →</Link></article>
           </section>
 
-          {admin ? <section className="dashboardStoreSection"><div><span className="dashboardCardLabel">ADMIN STUDIO</span><h2>Create what customers can buy or unlock.</h2><p>Only your admin account can create and publish Tekora projects and courses.</p></div><div className="dashboardKitCards"><article><span>PROJECTS</span><strong>Create & publish projects</strong><small>Free or paid · guided · DIY · kit-ready</small><Link href="/projects/new">Create project →</Link></article><article><span>COURSES</span><strong>Create & publish courses</strong><small>Free or paid · modules · lessons</small><Link href="/creator/courses">Course studio →</Link></article></div></section> : null}
+          {admin ? <section className="dashboardStoreSection"><div><span className="dashboardCardLabel">ADMIN STUDIO</span><h2>Run Tekora from one private workspace.</h2><p>Create projects and courses, review student requests, manage users and watch verified Paystack sales.</p><Link href="/admin" className="dashboardWelcomeAction">Open Admin Studio →</Link></div><div className="dashboardKitCards"><article><span>CONTENT</span><strong>Projects & Courses</strong><small>Create · price · publish · manage</small><Link href="/admin/projects">Manage content →</Link></article><article><span>OPERATIONS</span><strong>Requests & Sales</strong><small>Demand · users · verified purchases</small><Link href="/admin/project-requests">Review requests →</Link></article></div></section> : null}
 
           <section className="dashboardSectionPremium" id="my-projects">
             <div className="dashboardSectionHeader"><div><span className="dashboardCardLabel">MY PROJECTS</span><h2>Projects you have access to.</h2><p>Free and purchased projects appear here after you unlock them.</p></div><Link href="/projects/my">View all →</Link></div>
