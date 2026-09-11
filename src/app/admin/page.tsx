@@ -30,8 +30,6 @@ export default async function AdminOverviewPage() {
       take: 5,
       include: {
         user: { select: { name: true, username: true, email: true } },
-        project: { select: { title: true } },
-        course: { select: { title: true } },
       },
     }),
   ]);
@@ -70,7 +68,7 @@ export default async function AdminOverviewPage() {
 
         <article className="adminPanel">
           <div className="adminPanelHead"><h2>Recent sales</h2><Link href="/admin/sales">View all →</Link></div>
-          {recentSales.length === 0 ? <div className="adminEmpty"><h2>No paid sales yet.</h2><p>Verified Paystack purchases will appear here.</p></div> : <div className="adminList">{recentSales.map(sale => <div className="adminListRow" key={sale.id}><div><h3>{sale.project?.title ?? sale.course?.title ?? pretty(sale.target)}</h3><p>{sale.user.name ?? sale.user.username ?? sale.user.email}</p></div><span>{money(sale.amount, sale.currency)}</span><Link href="/admin/sales">Details →</Link></div>)}</div>}
+          {recentSales.length === 0 ? <div className="adminEmpty"><h2>No paid sales yet.</h2><p>Verified Paystack purchases will appear here.</p></div> : <div className="adminList">{recentSales.map(sale => <div className="adminListRow" key={sale.id}><div><h3>{sale.title}</h3><p>{sale.user.name ?? sale.user.username ?? sale.user.email} · {pretty(sale.targetType)}</p></div><span>{money(sale.amount, sale.currency)}</span><Link href="/admin/sales">Details →</Link></div>)}</div>}
         </article>
       </section>
     </div>
