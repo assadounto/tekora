@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { SiteHeader } from "@/components/site-header";
+import { PurchaseButton } from "@/components/purchase-button";
 import { publicProject, userCanAccessProject } from "@/modules/projects/service";
 import "../../../premium-home.css";
 import "../../../premium-accessibility.css";
@@ -30,26 +31,19 @@ export default async function ProjectCheckoutPage({ params }: { params: Promise<
           <Link href={`/projects/${project.slug}`} className="projectBack">← Back to project</Link>
           <span className="projectEyebrow">PAID PROJECT</span>
           <h1>Unlock {project.title}</h1>
-          <p>Paid access belongs to your Tekora account. After a verified payment, the project is added to My Projects and the full build workspace becomes available.</p>
-
-          <div className="projectCheckoutIncludes">
-            <span>Full project phases</span><span>Bill of materials</span><span>Technical resources</span><span>Documentation support</span><span>Project assistant access</span>
-          </div>
-
-          <div className="projectCheckoutNotice">
-            <strong>Secure payment is not enabled on this branch yet.</strong>
-            <p>The database is already ready for purchased access, including the amount paid and acquisition type. We will connect Paystack verification before allowing this button to unlock a project.</p>
-          </div>
+          <p>Your purchase belongs to your Tekora account. Paystack handles the checkout, then Tekora verifies the transaction on the server before adding the full project to My Projects.</p>
+          <div className="projectCheckoutIncludes"><span>Full project phases</span><span>Bill of materials</span><span>Technical resources</span><span>Documentation support</span><span>Project workspace</span></div>
+          <div className="projectCheckoutNotice"><strong>Access is granted only after verified payment.</strong><p>If payment is unsuccessful or the amount does not match, the project remains locked.</p></div>
         </div>
 
         <aside className="projectCheckoutCard">
           <span className="projectEyebrow">ORDER SUMMARY</span>
           <h2>{project.title}</h2>
           <div><span>Project access</span><strong>{project.currency} {((project.price ?? 0) / 100).toFixed(2)}</strong></div>
-          <div><span>Creator</span><strong>{project.creator.name ?? project.creator.username ?? "Tekora creator"}</strong></div>
-          <div><span>Access</span><strong>One Tekora account</strong></div>
-          <button type="button" className="premiumPrimaryCta" disabled>Paystack checkout coming next</button>
-          <small>No project access is granted until server-side payment verification succeeds.</small>
+          <div><span>Provider</span><strong>Tekora</strong></div>
+          <div><span>Access</span><strong>Your Tekora account</strong></div>
+          <PurchaseButton targetType="PROJECT" targetId={project.id} label={`Pay ${project.currency} ${((project.price ?? 0) / 100).toFixed(2)} →`} />
+          <small>Secure checkout is initialized from the Tekora server.</small>
         </aside>
       </section>
     </main>
