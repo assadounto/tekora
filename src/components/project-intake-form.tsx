@@ -15,20 +15,42 @@ export function ProjectIntakeForm({ mode }: { mode: "request" | "create" }) {
     event.preventDefault();
     setSaved(false);
     setError("");
+    setLoading(true);
 
     const form = new FormData(event.currentTarget);
 
     if (mode === "request") {
-      const item = Object.fromEntries(form.entries());
-      const current = JSON.parse(localStorage.getItem("tekora_project_requests") ?? "[]");
-      current.unshift({ ...item, id: crypto.randomUUID(), createdAt: new Date().toISOString() });
-      localStorage.setItem("tekora_project_requests", JSON.stringify(current));
+      const budgetGhs = Number(form.get("budget") ?? 0);
+      const response = await fetch("/api/v1/project-requests", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: String(form.get("title") ?? ""),
+          field: String(form.get("field") ?? ""),
+          area: String(form.get("area") ?? "") || undefined,
+          difficulty: String(form.get("difficulty") ?? "INTERMEDIATE").toUpperCase(),
+          description: String(form.get("description") ?? ""),
+          support: String(form.get("support") ?? "") || undefined,
+          budget: budgetGhs > 0 ? Math.round(budgetGhs * 100) : undefined,
+          currency: "GHS",
+        }),
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        if (response.status === 401) {
+          router.push("/sign-in");
+          return;
+        }
+        setError(result?.error ?? "Could not submit project request.");
+        setLoading(false);
+        return;
+      }
       setSaved(true);
+      setLoading(false);
       event.currentTarget.reset();
       return;
     }
 
-    setLoading(true);
     const priceGhs = Number(form.get("price") ?? 0);
     const payload = {
       title: String(form.get("title") ?? ""),
@@ -55,6 +77,10 @@ export function ProjectIntakeForm({ mode }: { mode: "request" | "create" }) {
         router.push("/sign-in");
         return;
       }
+      if (response.status === 403) {
+        router.push("/dashboard");
+        return;
+      }
       setError(result?.issues?.fieldErrors?.price?.[0] ?? result?.error ?? "Could not create project.");
       setLoading(false);
       return;
@@ -71,7 +97,7 @@ export function ProjectIntakeForm({ mode }: { mode: "request" | "create" }) {
         <label>Field<select name="field" required defaultValue=""><option value="" disabled>Select field</option>{projectFields.map(field => <option key={field}>{field}</option>)}</select></label>
         <label>Area / specialization<input name="area" placeholder="e.g. Power Systems, Mobile Apps" /></label>
         <label>Difficulty<select name="difficulty" defaultValue="INTERMEDIATE"><option value="SIMPLE">Simple</option><option value="INTERMEDIATE">Intermediate</option><option value="ADVANCED">Advanced</option></select></label>
-        <label>Budget<input name="budget" placeholder="e.g. GHS 500" /></label>
+        <label>Budget (GHS)<input name="budget" type="number" min="0" step="0.01" placeholder="e.g. 500" /></label>
         <label className="full">What should the project do?<textarea name="description" required rows={5} placeholder="Describe the problem, idea or expected result." /></label>
         <label className="full">What help or detail should the project include?<textarea name="support" rows={4} placeholder="Components, circuit, code, MATLAB, fabrication, documentation, kit..." /></label>
 
@@ -94,9 +120,9 @@ export function ProjectIntakeForm({ mode }: { mode: "request" | "create" }) {
           </>
         ) : null}
       </div>
-      <button className="premiumPrimaryCta" type="submit" disabled={loading}>{loading ? "Creating project..." : mode === "request" ? "Submit project request →" : "Create project draft →"}</button>
+      <button className="premiumPrimaryCta" type="submit" disabled={loading}>{loading ? (mode === "request" ? "Submitting request..." : "Creating project...") : mode === "request" ? "Submit project request →" : "Create project draft →"}</button>
       {error ? <p className="formError">{error}</p> : null}
-      {saved ? <p className="projectFormSuccess">Project request saved on this device for the prototype.</p> : null}
+      {saved ? <p className="projectFormSuccess">Request submitted. You can continue browsing while Tekora reviews the idea and budget.</p> : null}
     </form>
   );
 }
