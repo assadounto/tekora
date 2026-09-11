@@ -1,41 +1,43 @@
 import Link from "next/link";
+import { RegisterForm } from "@/components/register-form";
 import "../../auth-experience.css";
-
-const roles = [
-  { id: "learner", icon: "L", title: "Student / Learner", description: "Browse projects and courses, unlock what you need, request project ideas and build practical skills." },
-  { id: "mentor", icon: "M", title: "Mentor / Professional", description: "Join Tekora as an experienced professional who can support learners and project communities without publishing marketplace content." },
-  { id: "employer", icon: "I", title: "Industry / Employer", description: "Discover practical talent, connect with learners and follow the skills people prove through projects." },
-];
 
 export default function SignUpPage() {
   return (
-    <main className="tekoraRolePage">
-      <header className="tekoraRoleTopbar">
+    <main className="tekoraAuthPage">
+      <section className="tekoraAuthStory">
         <Link href="/" className="tekoraAuthBrand">
           <span className="tekoraAuthBrandMark">T</span>
           <span>Tekora</span>
         </Link>
-        <span>Already have an account? <Link href="/sign-in">Sign in</Link></span>
-      </header>
 
-      <section className="tekoraRoleMain">
-        <div className="tekoraRoleIntro">
-          <span className="tekoraAuthEyebrow">CREATE YOUR TEKORA IDENTITY</span>
-          <h1>Start with who you are today.</h1>
-          <p>One Tekora account keeps your projects, courses and progress together. Marketplace projects and courses are published by Tekora.</p>
+        <div className="tekoraAuthStoryBody">
+          <span className="tekoraAuthEyebrow">CREATE YOUR TEKORA ACCOUNT</span>
+          <h1>Find projects.<span>Build real skills.</span></h1>
+          <p>Create one account for your project library, courses, purchases and project requests. Tekora marketplace content is published by the admin.</p>
+
+          <div className="tekoraAuthProof">
+            <article><span>01</span><strong>Browse</strong><small>Explore practical projects and structured courses.</small></article>
+            <article><span>02</span><strong>Unlock</strong><small>Add free content or securely buy paid access.</small></article>
+            <article><span>03</span><strong>Build</strong><small>Keep everything connected to your Tekora account.</small></article>
+          </div>
         </div>
 
-        <div className="tekoraRoleGrid">
-          {roles.map((role) => (
-            <Link href={`/onboarding/profile?role=${role.id}`} className="tekoraRoleCard" key={role.id}>
-              <span className="tekoraRoleIcon">{role.icon}</span>
-              <div><h2>{role.title}</h2><p>{role.description}</p></div>
-              <span className="tekoraRoleArrow">→</span>
-            </Link>
-          ))}
-        </div>
+        <span className="tekoraAuthStoryFooter">Projects first. Practical by design.</span>
+      </section>
 
-        <p className="tekoraRoleBottom">By continuing, you agree to Tekora’s future platform terms and privacy policy. <Link href="/sign-in">I already have a profile</Link>.</p>
+      <section className="tekoraAuthPanel">
+        <div className="tekoraAuthCard">
+          <div className="tekoraAuthCardHeader">
+            <span className="tekoraAuthEyebrow">CREATE ACCOUNT</span>
+            <h2>Start with the basics.</h2>
+            <p>You can add your university, programme and interests later from your account.</p>
+          </div>
+
+          <RegisterForm />
+
+          <p className="tekoraAuthFootnote">Already have an account? <Link href="/sign-in">Sign in</Link></p>
+        </div>
       </section>
     </main>
   );
