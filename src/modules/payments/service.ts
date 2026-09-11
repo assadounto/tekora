@@ -7,6 +7,7 @@ type PaystackVerifyData = {
   amount?: number;
   currency?: string;
   metadata?: unknown;
+  paid_at?: string;
 };
 
 function parseMetadata(value: unknown) {
@@ -102,17 +103,36 @@ export async function verifyCheckout(userId: string, reference: string) {
     return { ok: false as const, error: "INVALID_PAYMENT_METADATA" as const };
   }
 
+  const paidAt = data.paid_at ? new Date(data.paid_at) : new Date();
+
   if (targetType === "PROJECT") {
     const project = await db.project.findFirst({ where: { id: targetId, status: "PUBLISHED", access: "PAID" } });
     if (!project?.price) return { ok: false as const, error: "PROJECT_NOT_FOUND" as const };
     if (data.amount !== project.price || String(data.currency ?? "").toUpperCase() !== project.currency.toUpperCase()) {
       return { ok: false as const, error: "PAYMENT_MISMATCH" as const };
     }
-    await db.projectEntitlement.upsert({
-      where: { userId_projectId: { userId, projectId: project.id } },
-      update: { acquisition: "PURCHASE", amountPaid: project.price, currency: project.currency },
-      create: { userId, projectId: project.id, acquisition: "PURCHASE", amountPaid: project.price, currency: project.currency },
-    });
+
+    await db.$transaction([
+      db.projectEntitlement.upsert({
+        where: { userId_projectId: { userId, projectId: project.id } },
+        update: { acquisition: "PURCHASE", amountPaid: project.price, currency: project.currency },
+        create: { userId, projectId: project.id, acquisition: "PURCHASE", amountPaid: project.price, currency: project.currency },
+      }),
+      db.purchase.upsert({
+        where: { reference },
+        update: {},
+        create: {
+          reference,
+          target: "PROJECT",
+          userId,
+          projectId: project.id,
+          amount: project.price,
+          currency: project.currency,
+          paidAt,
+        },
+      }),
+    ]);
+
     return { ok: true as const, redirect: `/projects/${project.slug}` };
   }
 
@@ -121,10 +141,27 @@ export async function verifyCheckout(userId: string, reference: string) {
   if (data.amount !== course.price || String(data.currency ?? "").toUpperCase() !== course.currency.toUpperCase()) {
     return { ok: false as const, error: "PAYMENT_MISMATCH" as const };
   }
-  await db.enrollment.upsert({
-    where: { userId_courseId: { userId, courseId: course.id } },
-    update: {},
-    create: { userId, courseId: course.id },
-  });
+
+  await db.$transaction([
+    db.enrollment.upsert({
+      where: { userId_courseId: { userId, courseId: course.id } },
+      update: {},
+      create: { userId, courseId: course.id },
+    }),
+    db.purchase.upsert({
+      where: { reference },
+      update: {},
+      create: {
+        reference,
+        target: "COURSE",
+        userId,
+        courseId: course.id,
+        amount: course.price,
+        currency: course.currency,
+        paidAt,
+      },
+    }),
+  ]);
+
   return { ok: true as const, redirect: `/learn/course/${course.id}` };
 }
