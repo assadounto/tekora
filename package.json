@@ -7,9 +7,13 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "clean": "rm -rf .next node_modules/.prisma",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
-    "db:studio": "prisma studio"
+    "db:reset": "prisma db push --force-reset && prisma generate",
+    "db:studio": "prisma studio",
+    "fresh": "npm run clean && prisma validate && npm run db:reset",
+    "check": "prisma validate && prisma generate && next build"
   },
   "dependencies": {
     "@prisma/client": "^6.7.0",
