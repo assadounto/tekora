@@ -14,12 +14,13 @@ export function SignInForm() {
     const form = new FormData(event.currentTarget);
 
     const result = await signIn("credentials", {
-      email: String(form.get("email") ?? ""),
+      email: String(form.get("email") ?? "").trim().toLowerCase(),
+      password: String(form.get("password") ?? ""),
       redirect: false,
     });
 
     if (result?.error) {
-      setError("We could not find a Tekora account with that email.");
+      setError("Invalid email or password.");
       setLoading(false);
       return;
     }
@@ -29,10 +30,17 @@ export function SignInForm() {
 
   return (
     <form className="authForm" onSubmit={submit}>
-      <label>Email<input name="email" type="email" required placeholder="you@example.com" /></label>
+      <label>
+        Email address
+        <input name="email" type="email" required autoComplete="email" placeholder="you@example.com" />
+      </label>
+      <label>
+        Password
+        <input name="password" type="password" required autoComplete="current-password" placeholder="Enter your password" />
+      </label>
       {error ? <p className="formError">{error}</p> : null}
       <button disabled={loading} type="submit" className="primaryButton">
-        {loading ? "Signing in..." : "Continue"}
+        {loading ? "Signing in..." : "Sign in"}
       </button>
     </form>
   );
