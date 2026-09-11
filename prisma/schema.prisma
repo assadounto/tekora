@@ -36,6 +36,7 @@ model User {
   projectEntitlements   ProjectEntitlement[]
   projectFavorites      ProjectFavorite[]
   projectPhaseProgress  ProjectPhaseProgress[]
+  projectRequests       ProjectRequest[]
   createdAt             DateTime               @default(now())
   updatedAt             DateTime               @updatedAt
 }
@@ -290,6 +291,14 @@ enum ProjectAcquisition {
   PURCHASE
 }
 
+enum ProjectRequestStatus {
+  SUBMITTED
+  REVIEWING
+  APPROVED
+  DECLINED
+  FULFILLED
+}
+
 model Project {
   id           String               @id @default(cuid())
   title        String
@@ -388,4 +397,24 @@ model ProjectPhaseProgress {
 
   @@unique([userId, phaseId])
   @@index([phaseId])
+}
+
+model ProjectRequest {
+  id          String               @id @default(cuid())
+  userId      String
+  user        User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title       String
+  field       String
+  area        String?
+  difficulty  ProjectDifficulty    @default(INTERMEDIATE)
+  description String
+  support     String?
+  budget      Int?
+  currency    String               @default("GHS")
+  status      ProjectRequestStatus @default(SUBMITTED)
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+
+  @@index([userId, status])
+  @@index([status, createdAt])
 }
