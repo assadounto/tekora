@@ -19,12 +19,13 @@ enum UserRole {
 model User {
   id                    String                 @id @default(cuid())
   email                 String                 @unique
+  passwordHash          String?
   username              String?                @unique
   name                  String?
   bio                   String?
   headline              String?
   location              String?
-  avatarUrl             String?
+  avatarUrl              String?
   onboardingCompleted   Boolean                @default(false)
   roles                 UserRoleLink[]
   profile               Profile?
@@ -183,7 +184,6 @@ model Course {
   category     CourseCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   modules      CourseModule[]
   enrollments  Enrollment[]
-  purchases    Purchase[]
   publishedAt  DateTime?
   createdAt    DateTime        @default(now())
   updatedAt    DateTime        @updatedAt
@@ -258,7 +258,7 @@ model LessonProgress {
   enrollment   Enrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
   lesson       Lesson     @relation(fields: [lessonId], references: [id], onDelete: Cascade)
   completed    Boolean    @default(false)
-  completedAt DateTime?
+  completedAt  DateTime?
   updatedAt    DateTime   @updatedAt
 
   @@unique([enrollmentId, lessonId])
@@ -327,7 +327,6 @@ model Project {
   components   ProjectComponent[]
   entitlements ProjectEntitlement[]
   favorites    ProjectFavorite[]
-  purchases    Purchase[]
   publishedAt  DateTime?
   createdAt    DateTime             @default(now())
   updatedAt    DateTime             @updatedAt
@@ -428,22 +427,19 @@ model ProjectRequest {
 }
 
 model Purchase {
-  id        String         @id @default(cuid())
-  reference String         @unique
-  provider  String         @default("PAYSTACK")
-  target    PurchaseTarget
-  userId    String
-  user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  projectId String?
-  project   Project?       @relation(fields: [projectId], references: [id], onDelete: SetNull)
-  courseId  String?
-  course    Course?        @relation(fields: [courseId], references: [id], onDelete: SetNull)
-  amount    Int
-  currency  String         @default("GHS")
-  paidAt    DateTime       @default(now())
-  createdAt DateTime       @default(now())
+  id          String         @id @default(cuid())
+  reference   String         @unique
+  userId      String
+  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  targetType  PurchaseTarget
+  targetId    String
+  title       String
+  amount      Int
+  currency    String         @default("GHS")
+  paidAt      DateTime       @default(now())
+  createdAt   DateTime       @default(now())
 
   @@index([userId, paidAt])
-  @@index([target, paidAt])
+  @@index([targetType, targetId])
   @@index([paidAt])
 }
