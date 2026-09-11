@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
+import { isAdminUser } from "@/lib/admin";
 import { createProjectSchema } from "@/modules/projects/schemas";
 import { createProject, listPublishedProjects } from "@/modules/projects/service";
 
@@ -12,6 +13,9 @@ export async function POST(request: Request) {
   const session = await auth();
   if (!session?.user?.id) {
     return NextResponse.json({ error: "UNAUTHORIZED" }, { status: 401 });
+  }
+  if (!(await isAdminUser(session.user.id))) {
+    return NextResponse.json({ error: "ADMIN_REQUIRED" }, { status: 403 });
   }
 
   const body = await request.json().catch(() => null);
