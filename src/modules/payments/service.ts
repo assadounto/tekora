@@ -89,11 +89,12 @@ export async function verifyCheckout(userId: string, reference: string) {
     cache: "no-store",
   });
   const payload = await response.json().catch(() => null) as { status?: boolean; data?: PaystackVerifyData } | null;
-  if (!response.ok || !payload?.status || payload.data?.status !== "success") {
+  const data = payload?.data;
+  if (!response.ok || !payload?.status || !data || data.status !== "success") {
     return { ok: false as const, error: "PAYMENT_NOT_SUCCESSFUL" as const };
   }
 
-  const metadata = parseMetadata(payload.data.metadata);
+  const metadata = parseMetadata(data.metadata);
   const metadataUserId = String(metadata.userId ?? "");
   const targetType = String(metadata.targetType ?? "") as CheckoutTarget;
   const targetId = String(metadata.targetId ?? "");
@@ -104,7 +105,7 @@ export async function verifyCheckout(userId: string, reference: string) {
   if (targetType === "PROJECT") {
     const project = await db.project.findFirst({ where: { id: targetId, status: "PUBLISHED", access: "PAID" } });
     if (!project?.price) return { ok: false as const, error: "PROJECT_NOT_FOUND" as const };
-    if (payload.data.amount !== project.price || String(payload.data.currency ?? "").toUpperCase() !== project.currency.toUpperCase()) {
+    if (data.amount !== project.price || String(data.currency ?? "").toUpperCase() !== project.currency.toUpperCase()) {
       return { ok: false as const, error: "PAYMENT_MISMATCH" as const };
     }
     await db.projectEntitlement.upsert({
@@ -117,7 +118,7 @@ export async function verifyCheckout(userId: string, reference: string) {
 
   const course = await db.course.findFirst({ where: { id: targetId, status: "PUBLISHED", access: "PAID" } });
   if (!course?.price) return { ok: false as const, error: "COURSE_NOT_FOUND" as const };
-  if (payload.data.amount !== course.price || String(payload.data.currency ?? "").toUpperCase() !== course.currency.toUpperCase()) {
+  if (data.amount !== course.price || String(data.currency ?? "").toUpperCase() !== course.currency.toUpperCase()) {
     return { ok: false as const, error: "PAYMENT_MISMATCH" as const };
   }
   await db.enrollment.upsert({
